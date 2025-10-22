@@ -1,4 +1,4 @@
-<!-- Version 0.7 -->
+<!-- Version 0.8 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,26 +39,16 @@
         textarea.input-base {
             resize: none;
         }
+         /* V0.8: Updated Radio Button Style (Pill/Segmented) */
         .radio-label {
-            @apply relative block w-full p-4 pl-12 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer hover:bg-gray-600 focus-within:ring-2 focus-within:ring-indigo-500;
-            /* Add padding-left for the checkmark */
+            @apply block w-full p-4 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer text-center transition-colors duration-200 hover:bg-gray-600 focus-within:ring-2 focus-within:ring-indigo-500;
+            /* Centered text, removed left padding */
         }
         input[type="radio"]:checked + .radio-label {
-            @apply bg-indigo-700 border-indigo-500 ring-2 ring-indigo-500;
+            @apply bg-indigo-700 border-indigo-500 text-white ring-2 ring-indigo-500;
+            /* Brighter background, distinct border/ring for selection */
         }
-        /* Style for the checkmark */
-        input[type="radio"]:checked + .radio-label::before {
-             content: '';
-             position: absolute;
-             left: 0.75rem; /* Adjust position */
-             top: 50%;
-             transform: translateY(-50%);
-             width: 1.25rem; /* Size of checkmark */
-             height: 1.25rem;
-             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='3' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M4.5 12.75l6 6 9-13.5' /%3E%3C/svg%3E");
-             background-size: contain;
-             background-repeat: no-repeat;
-        }
+        /* V0.8: Removed checkmark style */
         .sr-only {
             position: absolute;
             width: 1px;
@@ -93,28 +83,28 @@
                     <div class="relative">
                         <input type="radio" id="intent-general" name="intention" value="General Guidance & Self-Discovery" class="sr-only">
                         <label for="intent-general" class="radio-label">
-                            <span class="font-semibold text-white">General Guidance</span>
+                            <span class="font-semibold">General Guidance</span>
                             <span class="block text-sm text-gray-300">"What do I need to know right now?"</span>
                         </label>
                     </div>
                     <div class="relative">
                         <input type="radio" id="intent-problem" name="intention" value="Problem Solving & Career" class="sr-only">
                         <label for="intent-problem" class="radio-label">
-                            <span class="font-semibold text-white">Problem Solving & Career</span>
+                            <span class="font-semibold">Problem Solving & Career</span>
                             <span class="block text-sm text-gray-300">"How can I overcome this challenge?"</span>
                         </label>
                     </div>
                     <div class="relative">
                         <input type="radio" id="intent-relationships" name="intention" value="Relationships & Connection" class="sr-only">
                         <label for="intent-relationships" class="radio-label">
-                            <span class="font-semibold text-white">Relationships & Connection</span>
+                            <span class="font-semibold">Relationships & Connection</span>
                             <span class="block text-sm text-gray-300">"What do I need to understand about this relationship?"</span>
                         </label>
                     </div>
                     <div class="relative">
                         <input type="radio" id="intent-other" name="intention" value="other" class="sr-only">
                         <label for="intent-other" class="radio-label">
-                            <span class="font-semibold text-white">Other (Specify)</span>
+                            <span class="font-semibold">Other (Specify)</span>
                         </label>
                     </div>
                 </fieldset>
@@ -204,6 +194,11 @@
                     </div>
                     <!-- In-Depth View -->
                     <div id="deep-dive-view" class="hidden space-y-4">
+                        <h3 class="text-xl font-semibold text-indigo-300 mb-2">Spread Context</h3>
+                        <!-- V0.8: Add spread visual guide here -->
+                        <div id="deep-dive-spread-guide" class="mb-6 p-4 bg-gray-700/50 rounded-lg border border-gray-600">
+                           <!-- DYNAMIC CONTENT GOES HERE -->
+                        </div>
                         <h3 class="text-xl font-semibold text-indigo-300 mb-2">Card-by-Card Deep Dive</h3>
                         <div id="deep-dive-cards" class="space-y-4">
                             <!-- DYNAMIC CONTENT GOES HERE -->
@@ -218,7 +213,7 @@
 
         <!-- Version Footer -->
         <footer class="text-center text-xs text-gray-500 mt-4">
-            Version 0.7
+            Version 0.8
         </footer>
     </div>
 
@@ -350,6 +345,7 @@
         const summaryText = document.getElementById('summary-text');
         const deepDiveView = document.getElementById('deep-dive-view');
         const deepDiveCards = document.getElementById('deep-dive-cards');
+        const deepDiveSpreadGuide = document.getElementById('deep-dive-spread-guide'); // V0.8 Get element
         const spreadLibraryContainer = document.getElementById('spread-library');
         const visualGuideContainer = document.getElementById('spread-visual-guide');
         const selectedSpreadName = document.getElementById('selected-spread-name');
@@ -492,6 +488,7 @@
             errorDisplay.classList.add('hidden');
             summaryText.textContent = '';
             deepDiveCards.innerHTML = '';
+            deepDiveSpreadGuide.innerHTML = ''; // V0.8 Clear this too
             // Reset toggle buttons to default (Summary active)
             toggleSummary.click(); // Programmatically click summary
 
@@ -510,7 +507,7 @@
                     <div class="relative">
                         <input type="radio" id="${spread.id}" name="spread" value="${spread.id}" class="sr-only" ${isChecked ? 'checked' : ''}>
                         <label for="${spread.id}" class="radio-label">
-                            <span class="font-semibold text-white text-lg">${spread.name}</span>
+                            <span class="font-semibold text-lg">${spread.name}</span> <!-- Removed text-white for pill style -->
                             <span class="block text-sm text-gray-300">${spread.description}</span>
                         </label>
                     </div>
@@ -666,23 +663,23 @@
 
                 Respond ONLY with a valid JSON object with two keys: "summary" and "deep_dive".
 
-                1.  "summary": A single, insightful paragraph (3-5 sentences) that provides the main message of the reading, directly answering the user's question.
+                1.  "summary": A single, insightful paragraph (3-5 sentences) that provides the main message of the reading, directly answering the user's question about their intention ("${userIntention}"). Ensure the summary reflects the specific intention.
                 2.  "deep_dive": An array of objects, one for each position in the spread. Each object must have "position_number", "position_name", "card_name", "orientation", and "meaning".
 
-                "meaning" MUST be a detailed interpretation of that specific card in that specific position, synthesized with the user's question.
+                "meaning" MUST be a detailed interpretation of that specific card in that specific position, synthesized with the user's question ("${userIntention}").
 
-                If you detect a card is "Sideways", interpret it as "blocked or delayed energy" related to that card's meaning.
+                If you detect a card is "Sideways", interpret it as "blocked or delayed energy" related to that card's meaning in the context of the user's question ("${userIntention}").
 
-                Example for deep_dive array:
+                Example for deep_dive array if the question was about career:
                 [
-                    { "position_number": 1, "position_name": "The Present / The Self", "card_name": "The Fool", "orientation": "Upright", "meaning": "In the context of your career, this represents a new beginning. You are at the start of a new journey..." },
-                    { "position_number": 2, "position_name": "The Challenge", "card_name": "The Tower", "orientation": "Reversed", "meaning": "Your main challenge is an avoidance of a necessary change. You are resisting a "Tower" moment..." }
+                    { "position_number": 1, "position_name": "The Present / The Self", "card_name": "The Fool", "orientation": "Upright", "meaning": "In the context of your career question, this represents a new beginning. You are at the start of a new professional journey..." },
+                    { "position_number": 2, "position_name": "The Challenge", "card_name": "The Tower", "orientation": "Reversed", "meaning": "Regarding your career challenge, your main obstacle is an avoidance of a necessary change. You are resisting a "Tower" moment..." }
                 ]
             `;
 
             // --- DEBUG V0.6: Add specific logging and ensure finally always runs ---
             try {
-                // --- SIMULATED RESPONSE (FOR OFFLINE DEVELOPMENT) ---
+                /*// --- SIMULATED RESPONSE (FOR OFFLINE DEVELOPMENT) ---
                 console.log("Simulating API call..."); // DEBUG V0.6
                 await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate async delay
 
@@ -691,8 +688,11 @@
                      throw new Error("Cannot generate simulation: selectedSpread.map is invalid.");
                  }
 
+                 // V0.8: Make summary dynamic based on intention
+                const simulatedSummary = `Simulated summary specifically addressing your intention about "${appState.userIntention}". This reading highlights key energies related to your question, suggesting a focus on [Simulated Theme 1, e.g., 'new opportunities'] and navigating [Simulated Theme 2, e.g., 'unexpected challenges']. The overall outlook leans towards [Simulated Tone, e.g., 'cautious optimism'].`;
+
                 const simulatedResponse = {
-                    summary: `Simulated summary for your question about "${appState.userIntention}". This reading suggests potential opportunities and challenges related to your focus. Pay attention to the energies of change and intuition.`,
+                    summary: simulatedSummary, // Use the dynamic summary
                     deep_dive: appState.selectedSpread.map.map((position, index) => {
                         // Keep simulation simple and predictable
                         const cards = ["The Fool", "The Tower", "The High Priestess", "The Magician", "The Lovers", "The Chariot", "Strength", "The Hermit", "Wheel of Fortune", "Justice"];
@@ -700,12 +700,14 @@
                         const card = cards[index % cards.length];
                         const orientation = orientations[index % orientations.length];
                          // Ensure all required fields are present
+                         // V0.8: Make meaning dynamic based on intention
+                        const simulatedMeaning = `This is a simulated interpretation for ${card} (${orientation}) in the '${position.name || 'Unknown Position'}' position, specifically relating to your intention about "${appState.userIntention}". It represents how the card's energy might manifest in this context.`;
                         return {
                             position_number: position.position,
                             position_name: position.name || "Unknown Position",
                             card_name: card,
                             orientation: orientation,
-                            meaning: `This is a simulated interpretation for ${card} (${orientation}) in the '${position.name || 'Unknown Position'}' position, relating to your question about "${appState.userIntention}". It represents the card's energy in this context.`
+                            meaning: simulatedMeaning // Use the dynamic meaning
                         };
                     })
                 };
@@ -720,14 +722,14 @@
             } finally {
                  console.log("Hiding spinner in finally block."); // DEBUG V0.6
                  loadingSpinner.style.display = 'none'; // Ensure spinner hides
-            }
+            }*/
 
 
             // --- REAL API CALL (COMMENTED OUT FOR NOW) ---
-            /*
+            
             try {
                 console.log("Attempting REAL API call..."); // DEBUG V0.6
-                const apiKey = ""; // Will be auto-provided
+                const apiKey = "AIzaSyBP0p_ZMBYw-7a3wVc6naoLd8cPmT0rAb4"; // Will be auto-provided
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
                 const payload = {
@@ -786,7 +788,7 @@
                  console.log("Hiding spinner in finally block (REAL API)."); // DEBUG V0.6
                 loadingSpinner.style.display = 'none'; // Ensure spinner hides
             }
-            */
+            
             // --- END OF REAL API CALL ---
         }
 
@@ -819,7 +821,15 @@
                 // Populate Summary
                 summaryText.textContent = reading.summary;
 
-                // Populate Deep Dive
+                 // V0.8: Populate Spread Guide in Deep Dive
+                 if (appState.selectedSpread && appState.selectedSpread.visual_guide) {
+                     deepDiveSpreadGuide.innerHTML = appState.selectedSpread.visual_guide;
+                 } else {
+                     deepDiveSpreadGuide.innerHTML = '<p class="text-gray-400 italic">Spread guide not available.</p>';
+                 }
+
+
+                // Populate Deep Dive Cards
                 deepDiveCards.innerHTML = ''; // Clear old results
 
                  // Check if deep_dive array is empty
