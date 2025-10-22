@@ -374,17 +374,30 @@
             });
         });
 
-        // --- FIX V0.5: More Robust Label Click Handler (Keep this fix) ---
+        // --- FIX V0.5/V0.9: More Robust Label Click Handler ---
         document.querySelectorAll('#intention-options .radio-label').forEach(label => {
             label.addEventListener('click', (e) => {
                 const radioId = label.getAttribute('for');
                 const radio = document.getElementById(radioId);
+                console.log(`Intention Label clicked for: ${radioId}`); // DEBUG V0.9
                 if (radio && !radio.checked) {
                     radio.checked = true;
+                    // Force dispatch change event (good practice, might not be enough)
                     radio.dispatchEvent(new Event('change', { bubbles: true }));
+                    console.log(`Intention Radio ${radioId} programmatically checked.`); // DEBUG V0.9
+
+                    // --- FIX V0.9: Explicitly check state and enable button ---
+                    const selectedIntention = document.querySelector('input[name="intention"]:checked');
+                    if (selectedIntention) {
+                         // We don't have a button to enable here directly, but confirm selection
+                         console.log("Intention selected, btn-to-spread should be enabled on next click if valid.");
+                    } else {
+                        console.log("No intention selected after click?");
+                    }
                 }
             });
         });
+
 
         /**
          * Core navigation function.
@@ -404,44 +417,48 @@
         }
 
         // --- NAVIGATION EVENT LISTENERS ---
-
-        // Screen 1 -> Screen 2
+// Screen 1 -> Screen 2 (Added validation logging)
         btnToSpread.addEventListener('click', () => {
-            const selectedIntention = document.querySelector('input[name="intention"]:checked');
-            if (!selectedIntention) {
+            const selectedIntentionRadio = document.querySelector('input[name="intention"]:checked');
+             console.log("btnToSpread clicked. Selected intention radio:", selectedIntentionRadio); // DEBUG V0.9
+            if (!selectedIntentionRadio) {
                 alert('Please select an intention to proceed.');
+                console.warn("btnToSpread blocked: No intention selected."); // DEBUG V0.9
                 return;
             }
 
-            if (selectedIntention.value === 'other') {
+            if (selectedIntentionRadio.value === 'other') {
                 const otherText = userIntentionOther.value.trim();
+                console.log("Intention 'Other' selected. Text:", otherText); // DEBUG V0.9
                 if (otherText.length < 5) {
                     alert('Please enter your specific question.');
+                    console.warn("btnToSpread blocked: 'Other' text too short."); // DEBUG V0.9
                     return;
                 }
                 appState.userIntention = otherText;
             } else {
-                appState.userIntention = selectedIntention.value;
+                appState.userIntention = selectedIntentionRadio.value;
             }
-
+            console.log("User Intention Set:", appState.userIntention); // DEBUG V0.9
             populateSpreadLibrary();
             showScreen('screen-spread-choice');
         });
 
         // Screen 2 -> Screen 1 (Back)
         btnToIntention.addEventListener('click', () => showScreen('screen-intention'));
-
-        // Screen 2 -> Screen 3
+       // Screen 2 -> Screen 3 (Added validation logging)
         btnToUpload.addEventListener('click', () => {
+             console.log("btnToUpload clicked. Current selectedSpread:", appState.selectedSpread); // DEBUG V0.9
             if (!appState.selectedSpread) {
                 alert('Please select a spread.');
+                 console.warn("btnToUpload blocked: No spread selected."); // DEBUG V0.9
                 return;
             }
             selectedSpreadName.textContent = appState.selectedSpread.name;
             visualGuideContainer.innerHTML = appState.selectedSpread.visual_guide;
+             console.log("Navigating to screen-upload with spread:", appState.selectedSpread.name); // DEBUG V0.9
             showScreen('screen-upload');
         });
-
         // Screen 3 -> Screen 2 (Back)
         btnToSpreadBack.addEventListener('click', () => showScreen('screen-spread-choice'));
 
@@ -501,13 +518,14 @@
 
         function populateSpreadLibrary() {
             spreadLibraryContainer.innerHTML = ''; // Clear old
+             console.log("Populating Spread Library..."); // DEBUG V0.9
             Object.values(SPREAD_LIBRARY).forEach(spread => {
-                const isChecked = appState.selectedSpread && appState.selectedSpread.id === spread.id; // Preserve selection if going back/forth
+                const isChecked = appState.selectedSpread && appState.selectedSpread.id === spread.id;
                 const spreadHtml = `
                     <div class="relative">
                         <input type="radio" id="${spread.id}" name="spread" value="${spread.id}" class="sr-only" ${isChecked ? 'checked' : ''}>
                         <label for="${spread.id}" class="radio-label">
-                            <span class="font-semibold text-lg">${spread.name}</span> <!-- Removed text-white for pill style -->
+                            <span class="font-semibold text-lg">${spread.name}</span>
                             <span class="block text-sm text-gray-300">${spread.description}</span>
                         </label>
                     </div>
@@ -515,40 +533,57 @@
                 spreadLibraryContainer.innerHTML += spreadHtml;
             });
 
-            // --- FIX V0.5: More Robust Label Click Handler (Keep this fix) ---
+            // --- FIX V0.5/V0.9: More Robust Label Click Handler ---
              document.querySelectorAll('#spread-library .radio-label').forEach(label => {
                 label.addEventListener('click', (e) => {
                     const radioId = label.getAttribute('for');
                     const radio = document.getElementById(radioId);
+                     console.log(`Spread Label clicked for: ${radioId}`); // DEBUG V0.9
                     if (radio && !radio.checked) {
                         radio.checked = true;
+                        // Force dispatch change event
                         radio.dispatchEvent(new Event('change', { bubbles: true }));
+                         console.log(`Spread Radio ${radioId} programmatically checked.`); // DEBUG V0.9
+
+                         // --- FIX V0.9: Explicitly call selectSpread logic ---
+                         selectSpread(radio.value);
                     }
                 });
             });
 
+            // Keep the change listener for redundancy/other update methods
             document.querySelectorAll('input[name="spread"]').forEach(radio => {
                 radio.addEventListener('change', (e) => {
-                    selectSpread(e.target.value);
+                     console.log(`Spread change event detected for: ${e.target.value}`); // DEBUG V0.9
+                     selectSpread(e.target.value); // Ensure state is updated
                 });
             });
 
-            // Re-enable button if a spread was already selected
-            if(appState.selectedSpread) {
-                 btnToUpload.classList.remove('opacity-50', 'cursor-not-allowed');
-                 btnToUpload.disabled = false;
+            // Check initial state after populating
+            const initiallyChecked = document.querySelector('input[name="spread"]:checked');
+            if(initiallyChecked) {
+                 console.log("Spread initially checked:", initiallyChecked.value); // DEBUG V0.9
+                 selectSpread(initiallyChecked.value); // Ensure button state matches initial check
             } else {
+                 console.log("No spread initially checked. Disabling btnToUpload."); // DEBUG V0.9
                  btnToUpload.classList.add('opacity-50', 'cursor-not-allowed');
                  btnToUpload.disabled = true;
             }
         }
 
         function selectSpread(spreadId) {
+             console.log(`Selecting spread: ${spreadId}`); // DEBUG V0.9
             appState.selectedSpread = SPREAD_LIBRARY[spreadId];
-            btnToUpload.classList.remove('opacity-50', 'cursor-not-allowed');
-            btnToUpload.disabled = false;
+            if (appState.selectedSpread) {
+                console.log("Enabling btnToUpload."); // DEBUG V0.9
+                btnToUpload.classList.remove('opacity-50', 'cursor-not-allowed');
+                btnToUpload.disabled = false;
+            } else {
+                 console.warn(`Spread ID ${spreadId} not found in library. Disabling btnToUpload.`); // DEBUG V0.9
+                 btnToUpload.classList.add('opacity-50', 'cursor-not-allowed');
+                 btnToUpload.disabled = true;
+            }
         }
-
         // --- IMAGE HANDLING ---
         imageUpload.addEventListener('change', (event) => {
             const file = event.target.files[0];
@@ -892,4 +927,5 @@
     </script>
 </body>
 </html>
+
 
