@@ -604,6 +604,7 @@
             `;
             
             // --- SIMULATED RESPONSE (FOR OFFLINE DEVELOPMENT) ---
+            /*
             setTimeout(() => {
                 const simulatedResponse = {
                     summary: "Your career question reveals a path of new beginnings, though it is not without challenges. The core of the matter suggests you are ready to take a leap of faith, but past habits and a fear of sudden change are holding you back. The path forward requires you to embrace this change and trust your intuition.",
@@ -626,9 +627,8 @@
                 loadingSpinner.style.display = 'none';
 
             }, 2000); // Simulate 2-second API call
-            
+            */
             // --- REAL API CALL (COMMENTED OUT FOR NOW) ---
-            /*
             try {
                 const apiKey = "AIzaSyBP0p_ZMBYw-7a3wVc6naoLd8cPmT0rAb4"; // Will be auto-provided
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
@@ -746,5 +746,6 @@
     </script>
 </body>
 </html>
+
 
 
