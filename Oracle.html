@@ -1,3 +1,4 @@
+<!-- Version 0.5 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -357,20 +358,15 @@
             });
         });
         
-        // --- BUG FIX V0.4: Add JS click handlers to labels for reliability ---
+        // --- FIX V0.5: More Robust Label Click Handler ---
         document.querySelectorAll('#intention-options .radio-label').forEach(label => {
             label.addEventListener('click', (e) => {
                 const radioId = label.getAttribute('for');
                 const radio = document.getElementById(radioId);
-                if (radio) {
+                if (radio && !radio.checked) { // Only act if not already checked
                     radio.checked = true;
-                    // Manually dispatch change event for 'other' toggle
-                    if(radio.value === 'other') {
-                        userIntentionOther.classList.remove('hidden');
-                        userIntentionOther.focus();
-                    } else {
-                        userIntentionOther.classList.add('hidden');
-                    }
+                    // Manually dispatch the change event
+                    radio.dispatchEvent(new Event('change', { bubbles: true }));
                 }
             });
         });
@@ -423,6 +419,7 @@
         // Screen 2 -> Screen 3
         btnToUpload.addEventListener('click', () => {
             if (!appState.selectedSpread) {
+                // This check should ideally not be needed if button is disabled, but good fallback
                 alert('Please select a spread.');
                 return;
             }
@@ -436,31 +433,47 @@
 
         // Screen 4 -> Screen 1 (New Reading)
         btnNewReading.addEventListener('click', () => {
+            // --- FIX V0.5: Ensure radio buttons are properly reset ---
             appState.userIntention = '';
             appState.selectedSpread = null;
             appState.uploadedImage = null;
             appState.reading = null;
-            
+
+            // Clear intention selection
             const checkedIntention = document.querySelector('input[name="intention"]:checked');
-            if(checkedIntention) checkedIntention.checked = false;
-            
+            if (checkedIntention) checkedIntention.checked = false;
+            intentionOptions.forEach(radio => { // Ensure styles are reset if needed
+                 const label = document.querySelector(`label[for="${radio.id}"]`);
+                 if(label) label.classList.remove('bg-indigo-700', 'border-indigo-500', 'ring-2');
+            });
+
             userIntentionOther.value = '';
             userIntentionOther.classList.add('hidden');
+
+            // Clear spread selection (state cleared, UI will repopulate)
             
-            imageUpload.value = null;
+            // Clear upload state
+            imageUpload.value = null; // Clear file input
+            imagePreview.src = '#'; // Clear preview image source
             imagePreviewContainer.classList.add('hidden');
             imageUploadText.textContent = "Click to select an image";
             
+            // Disable buttons
             revealButton.classList.add('opacity-50', 'cursor-not-allowed');
             revealButton.disabled = true;
             btnToUpload.classList.add('opacity-50', 'cursor-not-allowed');
             btnToUpload.disabled = true;
             
+            // Clear results/errors
             resultsContent.classList.add('hidden');
             errorDisplay.classList.add('hidden');
-            
+            summaryText.textContent = ''; // Clear text content
+            deepDiveCards.innerHTML = ''; // Clear dynamic cards
+
+            // Navigate
             showScreen('screen-intention');
         });
+
 
         // --- SPREAD SELECTION ---
         
@@ -479,15 +492,15 @@
                 spreadLibraryContainer.innerHTML += spreadHtml;
             });
 
-            // --- BUG FIX V0.4: Add JS click handlers to labels for reliability ---
-            document.querySelectorAll('#spread-library .radio-label').forEach(label => {
+            // --- FIX V0.5: More Robust Label Click Handler ---
+             document.querySelectorAll('#spread-library .radio-label').forEach(label => {
                 label.addEventListener('click', (e) => {
                     const radioId = label.getAttribute('for');
                     const radio = document.getElementById(radioId);
-                    if (radio) {
+                    if (radio && !radio.checked) { // Only act if not already checked
                         radio.checked = true;
-                        // Manually dispatch change event
-                        radio.dispatchEvent(new Event('change'));
+                        // Manually dispatch the change event
+                        radio.dispatchEvent(new Event('change', { bubbles: true }));
                     }
                 });
             });
@@ -569,7 +582,6 @@
                 .map(p => `Position ${p.position} (${p.name}): ${p.description}`)
                 .join('\n');
 
-            // --- BUG FIX V0.4: Update prompt to ask for position_number ---
             const prompt = `
                 You are The Oracle, a wise and insightful Tarot reader.
                 A user has provided an image of a tarot spread, a question, and the spread's structure.
@@ -601,9 +613,11 @@
                 ]
             `;
             
-            // --- SIMULATED RESPONSE (FOR OFFLINE DEVELOPMENT) ---
-            setTimeout(() => {
-                // --- BUG FIX V0.4: Add position_number to simulated response ---
+            // --- FIX V0.5: Wrap simulation in try/catch and use finally ---
+            try {
+                // --- SIMULATED RESPONSE (FOR OFFLINE DEVELOPMENT) ---
+                await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate async delay
+                
                 const simulatedResponse = {
                     summary: "Your career question reveals a path of new beginnings, though it is not without challenges. The core of the matter suggests you are ready to take a leap of faith, but past habits and a fear of sudden change are holding you back. The path forward requires you to embrace this change and trust your intuition.",
                     deep_dive: appState.selectedSpread.map((position, index) => {
@@ -612,7 +626,7 @@
                         const card = cards[index % cards.length];
                         const orientation = orientations[index % orientations.length];
                         return {
-                            position_number: position.position, // Added this
+                            position_number: position.position, 
                             position_name: position.name,
                             card_name: card,
                             orientation: orientation,
@@ -623,9 +637,14 @@
                 
                 appState.reading = simulatedResponse;
                 displayReading(simulatedResponse);
-                loadingSpinner.style.display = 'none';
 
-            }, 2000); // Simulate 2-second API call
+            } catch (simError) {
+                 console.error('Error during simulation:', simError);
+                 displayError('An unexpected error occurred during the simulation.');
+            } finally {
+                 loadingSpinner.style.display = 'none'; // Ensure spinner hides
+            }
+
             
             // --- REAL API CALL (COMMENTED OUT FOR NOW) ---
             /*
@@ -679,7 +698,7 @@
                 console.error('Error in performReading:', error);
                 displayError(`The Oracle's vision is clouded. ${error.message}. Please try again with a clearer photo.`);
             } finally {
-                loadingSpinner.style.display = 'none';
+                loadingSpinner.style.display = 'none'; // Ensure spinner hides
             }
             */
             // --- END OF REAL API CALL ---
@@ -689,24 +708,25 @@
          * Renders the AI's response in the UI.
          */
         function displayReading() {
-            const reading = appState.reading;
-            if (!reading || !reading.summary || !reading.deep_dive) {
-                displayError("The Oracle's response was incomplete. Please try again.");
-                return;
-            }
-            
+            // --- FIX V0.5: Add try/catch within displayReading ---
             try {
+                const reading = appState.reading;
+                if (!reading || !reading.summary || !reading.deep_dive) {
+                    // Use displayError for consistency
+                    displayError("The Oracle's response was incomplete. Please try again."); 
+                    return;
+                }
+                
                 // Populate Summary
                 summaryText.textContent = reading.summary;
 
                 // Populate Deep Dive
                 deepDiveCards.innerHTML = ''; // Clear old results
                 
-                // --- BUG FIX V0.4: New Visual Layout for Results ---
                 reading.deep_dive.forEach((card, index) => {
                     const cardName = card.card_name || "Unknown Card";
                     const orientation = card.orientation || "N/A";
-                    const positionNum = card.position_number || (index + 1);
+                    const positionNum = card.position_number || (index + 1); // Fallback if AI missed it
                     const positionName = card.position_name || "N/A";
                     const meaning = card.meaning || "No interpretation provided.";
                     
@@ -719,18 +739,21 @@
                                     <p class="text-md font-medium text-indigo-300">${cardName} (${orientation})</p>
                                 </div>
                             </div>
-                            <p class_ ="text-sm text-gray-300 mt-3 pl-14">${meaning}</p>
+                            <p class="text-sm text-gray-300 mt-3 pl-14">${meaning}</p> <!-- Fixed typo class_ -> class -->
                         </div>
                     `;
                     deepDiveCards.innerHTML += cardHtml;
                 });
 
                 resultsContent.style.display = 'block';
-                toggleSummary.click(); 
+                errorDisplay.style.display = 'none'; // Ensure error is hidden on success
+                toggleSummary.click(); // Default to summary view
 
             } catch (error) {
                 console.error('Error displaying reading:', error);
-                displayError('The Oracle\'s response was in a strange format. Please try again.');
+                 // Use displayError for consistency
+                displayError('There was a problem displaying the reading. Please try again.');
+                resultsContent.style.display = 'none'; // Hide potentially broken results
             }
         }
 
@@ -740,8 +763,8 @@
         function displayError(message) {
             errorMessage.textContent = message;
             errorDisplay.style.display = 'block';
-            loadingSpinner.style.display = 'none';
-            resultsContent.style.display = 'none';
+            loadingSpinner.style.display = 'none'; // Ensure spinner is hidden on error
+            resultsContent.style.display = 'none'; // Hide results area on error
         }
 
         // --- INITIALIZE APP ---
