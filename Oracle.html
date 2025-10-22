@@ -20,7 +20,6 @@
         /* Custom styles for a cleaner look */
         .btn {
             @apply inline-block w-full text-center px-6 py-3 rounded-lg font-semibold text-white shadow-md transition-all duration-300;
-            /* -- ACCESSIBILITY: Add visible focus ring -- */
             @apply focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800;
         }
         .btn-primary {
@@ -38,15 +37,12 @@
         textarea.input-base {
             resize: none;
         }
-        /* Style for radio button labels */
         .radio-label {
-            /* -- ACCESSIBILITY: Add focus-within for keyboard users -- */
             @apply block w-full p-4 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer hover:bg-gray-600 focus-within:ring-2 focus-within:ring-indigo-500;
         }
         input[type="radio"]:checked + .radio-label {
             @apply bg-indigo-700 border-indigo-500 ring-2 ring-indigo-500;
         }
-        /* -- ACCESSIBILITY: Visually hide the radio button but keep it focusable -- */
         .sr-only {
             position: absolute;
             width: 1px;
@@ -64,28 +60,21 @@
 
     <div class="container mx-auto max-w-lg p-4 min-h-screen flex flex-col justify-center">
 
-        <!-- Header -->
         <header class="text-center mb-6">
             <h1 class="text-4xl font-bold text-white mb-2">The Oracle's Eye</h1>
             <p class="text-lg text-indigo-300">A Guided Tarot Experience</p>
         </header>
 
-        <!-- Main Content Area -->
-        <!-- -- ACCESSIBILITY: Add role="main" for screen readers -- -->
         <main class="card-bg" role="main">
 
             <!-- SCREEN 1: INTENTION -->
-            <!-- -- ACCESSIBILITY: Add role="region" and aria-label -- -->
             <div id="screen-intention" class="screen" role="region" aria-label="Step 1: Set Intention">
-                <h2 class="text-2xl font-semibold text-white mb-4">What is your intention?</h2>
-                <!-- -- ACCESSIBILITY: Improved contrast from gray-400 to gray-300 -- -->
+                <h2 class="text-2xl font-semibold text-white mb-4" tabindex="-1">What is your intention?</h2>
                 <p class="text-gray-300 mb-4">Select the area of your life that needs clarity. This will focus the reading.</p>
                 
-                <!-- -- ACCESSIBILITY: Changed to a fieldset for grouping controls -- -->
                 <fieldset id="intention-options" class="space-y-3">
                     <legend class="sr-only">Intention Options</legend>
                     <div class="relative">
-                        <!-- -- ACCESSIBILITY: Changed 'hidden' to 'sr-only' class -- -->
                         <input type="radio" id="intent-general" name="intention" value="General Guidance & Self-Discovery" class="sr-only">
                         <label for="intent-general" class="radio-label">
                             <span class="font-semibold text-white">General Guidance</span>
@@ -121,10 +110,9 @@
 
             <!-- SCREEN 2: SPREAD CHOICE -->
             <div id="screen-spread-choice" class="screen" role="region" aria-label="Step 2: Choose Spread">
-                <h2 class="text-2xl font-semibold text-white mb-4">Choose Your Spread</h2>
+                <h2 class="text-2xl font-semibold text-white mb-4" tabindex="-1">Choose Your Spread</h2>
                 <p class="text-gray-300 mb-4">The spread provides the structure for your reading. Select one that fits your question.</p>
                 
-                <!-- -- ACCESSIBILITY: Changed to a fieldset for grouping controls -- -->
                 <fieldset id="spread-library" class="space-y-3">
                     <legend class="sr-only">Spread Options</legend>
                     <!-- This will be dynamically populated by SPREAD_LIBRARY -->
@@ -136,7 +124,7 @@
 
             <!-- SCREEN 3: UPLOAD & GUIDE -->
             <div id="screen-upload" class="screen" role="region" aria-label="Step 3: Upload Photo">
-                <h2 class="text-2xl font-semibold text-white mb-2">Lay Out Your Cards</h2>
+                <h2 class="text-2xl font-semibold text-white mb-2" tabindex="-1">Lay Out Your Cards</h2>
                 <p class="text-gray-300 mb-4">Arrange your physical cards according to the <span id="selected-spread-name" class="font-semibold text-indigo-300">Selected Spread</span>, then upload a single photo.</p>
 
                 <div id="spread-visual-guide" class="mb-6 p-4 bg-gray-700 rounded-lg">
@@ -146,17 +134,14 @@
                 <div class="mb-4">
                     <label for="image-upload" class="block w-full p-6 border-2 border-dashed border-gray-600 rounded-lg text-center cursor-pointer hover:border-indigo-500 hover:bg-gray-700 transition-all focus-within:ring-2 focus-within:ring-indigo-500">
                         <span id="image-upload-text" class="text-gray-300">Click to select an image</span>
-                        <!-- -- ACCESSIBILITY: Kept 'hidden' as it's a file input, the label is the focus target -- -->
                         <input type="file" id="image-upload" class="hidden" accept="image/*">
                     </label>
                 </div>
 
                 <div id="image-preview-container" class="mb-4 hidden">
-                    <!-- -- ACCESSIBILITY: Alt text is descriptive -- -->
                     <img id="image-preview" src="#" alt="Your uploaded spread" class="max-h-60 w-auto mx-auto rounded-lg shadow-md">
                 </div>
 
-                <!-- -- ACCESSIBILITY: <details> is semantic and keyboard-friendly -- -->
                 <details classs="mb-4">
                     <summary class="text-sm text-gray-500 cursor-pointer hover:text-white focus:outline-none focus:ring-1 focus:ring-indigo-500">Pro Tips for a Good Reading</summary>
                     <ul class="list-disc list-inside text-sm text-gray-300 mt-2 pl-2">
@@ -173,20 +158,16 @@
             
             <!-- SCREEN 4: READING -->
             <div id="screen-reading" class="screen" role="region" aria-label="Step 4: Your Reading">
-                <h2 class="text-2xl font-semibold text-white mb-4">Your Reading</h2>
+                <h2 class="text-2xl font-semibold text-white mb-4" tabindex="-1">Your Reading</h2>
                 
-                <!-- -- ACCESSIBILITY: Added role="group" for the toggle -- -->
                 <div class="mb-4 flex justify-center" role="group" aria-label="Reading Format">
                     <div classs="bg-gray-700 p-1 rounded-lg flex space-x-1">
-                        <!-- -- ACCESSIBILITY: Add aria-pressed state -- -->
                         <button id="toggle-summary" class="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" aria-pressed="true">Summary</button>
                         <button id="toggle-deep-dive" class="px-4 py-2 text-sm font-semibold text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" aria-pressed="false">In-Depth</button>
                     </div>
                 </div>
 
-                <!-- -- ACCESSIBILITY: Add role="status" and aria-live="polite" -- -->
                 <div id="loading-spinner" class="text-center py-10 hidden" role="status" aria-live="polite">
-                    <!-- -- ACCESSIBILITY: Add aria-hidden to decorative SVG -- -->
                     <svg class="animate-spin h-8 w-8 text-indigo-400 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -194,13 +175,11 @@
                     <p class="text-gray-300 mt-3">The Oracle is considering your question...</p>
                 </div>
 
-                <!-- -- ACCESSIBILITY: Add role="alert" and aria-live="assertive" -- -->
                 <div id="error-display" class="hidden bg-red-900 border border-red-700 text-red-200 px-4 py-3 rounded-lg mb-4" role="alert" aria-live="assertive">
                     <strong class="font-bold">A murky vision!</strong>
                     <span id="error-message" class="block sm:inline"></span>
                 </div>
 
-                <!-- -- ACCESSIBILITY: Add aria-live="polite" to announce content change -- -->
                 <div id="results-content" class="hidden" aria-live="polite">
                     <!-- Summary View -->
                     <div id="summary-view" class="">
@@ -211,7 +190,7 @@
                     <div id="deep-dive-view" class="hidden space-y-4">
                         <h3 class="text-xl font-semibold text-indigo-300 mb-2">Card-by-Card Deep Dive</h3>
                         <div id="deep-dive-cards" class="space-y-4">
-                            <!-- In-depth cards will be dynamically inserted here -->
+                            <!-- DYNAMIC CONTENT GOES HERE -->
                         </div>
                     </div>
                 </div>
@@ -377,9 +356,27 @@
                 }
             });
         });
+        
+        // --- BUG FIX V0.4: Add JS click handlers to labels for reliability ---
+        document.querySelectorAll('#intention-options .radio-label').forEach(label => {
+            label.addEventListener('click', (e) => {
+                const radioId = label.getAttribute('for');
+                const radio = document.getElementById(radioId);
+                if (radio) {
+                    radio.checked = true;
+                    // Manually dispatch change event for 'other' toggle
+                    if(radio.value === 'other') {
+                        userIntentionOther.classList.remove('hidden');
+                        userIntentionOther.focus();
+                    } else {
+                        userIntentionOther.classList.add('hidden');
+                    }
+                }
+            });
+        });
 
         /**
-         * Core navigation function. Hides all screens and shows the one specified.
+         * Core navigation function.
          */
         function showScreen(screenId) {
             screens.forEach(screen => screen.style.display = 'none');
@@ -388,7 +385,6 @@
             appState.currentScreen = screenId;
             window.scrollTo(0, 0);
             
-            // -- ACCESSIBILITY: Focus the new screen's heading for screen readers --
             const heading = newScreen.querySelector('h2');
             if(heading) {
                 heading.setAttribute('tabindex', -1);
@@ -468,13 +464,9 @@
 
         // --- SPREAD SELECTION ---
         
-        /**
-         * Populates the spread choice screen from the SPREAD_LIBRARY
-         */
         function populateSpreadLibrary() {
             spreadLibraryContainer.innerHTML = ''; // Clear old
             Object.values(SPREAD_LIBRARY).forEach(spread => {
-                // -- ACCESSIBILITY: Use proper radio button and label --
                 const spreadHtml = `
                     <div class="relative">
                         <input type="radio" id="${spread.id}" name="spread" value="${spread.id}" class="sr-only">
@@ -487,7 +479,19 @@
                 spreadLibraryContainer.innerHTML += spreadHtml;
             });
 
-            // -- ACCESSIBILITY: Add event listeners to the new radio buttons --
+            // --- BUG FIX V0.4: Add JS click handlers to labels for reliability ---
+            document.querySelectorAll('#spread-library .radio-label').forEach(label => {
+                label.addEventListener('click', (e) => {
+                    const radioId = label.getAttribute('for');
+                    const radio = document.getElementById(radioId);
+                    if (radio) {
+                        radio.checked = true;
+                        // Manually dispatch change event
+                        radio.dispatchEvent(new Event('change'));
+                    }
+                });
+            });
+
             document.querySelectorAll('input[name="spread"]').forEach(radio => {
                 radio.addEventListener('change', (e) => {
                     selectSpread(e.target.value);
@@ -495,16 +499,11 @@
             });
         }
 
-        /**
-         * Handles the user clicking on a spread.
-         */
         function selectSpread(spreadId) {
             appState.selectedSpread = SPREAD_LIBRARY[spreadId];
             
             btnToUpload.classList.remove('opacity-50', 'cursor-not-allowed');
             btnToUpload.disabled = false;
-            
-            // Highlight is now handled by :checked + .radio-label CSS
         }
 
         // --- IMAGE HANDLING ---
@@ -528,7 +527,6 @@
         toggleSummary.addEventListener('click', () => {
             summaryView.style.display = 'block';
             deepDiveView.style.display = 'none';
-            // -- ACCESSIBILITY: Set aria-pressed --
             toggleSummary.setAttribute('aria-pressed', 'true');
             toggleSummary.classList.add('bg-indigo-600', 'text-white');
             toggleSummary.classList.remove('text-gray-300');
@@ -541,7 +539,6 @@
         toggleDeepDive.addEventListener('click', () => {
             summaryView.style.display = 'none';
             deepDiveView.style.display = 'block';
-            // -- ACCESSIBILITY: Set aria-pressed --
             toggleDeepDive.setAttribute('aria-pressed', 'true');
             toggleDeepDive.classList.add('bg-indigo-600', 'text-white');
             toggleDeepDive.classList.remove('text-gray-300');
@@ -572,6 +569,7 @@
                 .map(p => `Position ${p.position} (${p.name}): ${p.description}`)
                 .join('\n');
 
+            // --- BUG FIX V0.4: Update prompt to ask for position_number ---
             const prompt = `
                 You are The Oracle, a wise and insightful Tarot reader.
                 A user has provided an image of a tarot spread, a question, and the spread's structure.
@@ -590,7 +588,7 @@
                 Respond ONLY with a valid JSON object with two keys: "summary" and "deep_dive".
                 
                 1.  "summary": A single, insightful paragraph (3-5 sentences) that provides the main message of the reading, directly answering the user's question.
-                2.  "deep_dive": An array of objects, one for each position in the spread. Each object must have "position_name" (from the spread map), "card_name", "orientation", and "meaning".
+                2.  "deep_dive": An array of objects, one for each position in the spread. Each object must have "position_number", "position_name", "card_name", "orientation", and "meaning".
                 
                 "meaning" MUST be a detailed interpretation of that specific card in that specific position, synthesized with the user's question.
                 
@@ -598,22 +596,23 @@
                 
                 Example for deep_dive array:
                 [
-                    { "position_name": "The Present / The Self", "card_name": "The Fool", "orientation": "Upright", "meaning": "In the context of your career, this represents a new beginning. You are at the start of a new journey..." },
-                    { "position_name": "The Challenge", "card_name": "The Tower", "orientation": "Reversed", "meaning": "Your main challenge is an avoidance of a necessary change. You are resisting a "Tower" moment..." }
+                    { "position_number": 1, "position_name": "The Present / The Self", "card_name": "The Fool", "orientation": "Upright", "meaning": "In the context of your career, this represents a new beginning. You are at the start of a new journey..." },
+                    { "position_number": 2, "position_name": "The Challenge", "card_name": "The Tower", "orientation": "Reversed", "meaning": "Your main challenge is an avoidance of a necessary change. You are resisting a "Tower" moment..." }
                 ]
             `;
             
             // --- SIMULATED RESPONSE (FOR OFFLINE DEVELOPMENT) ---
-            /*
             setTimeout(() => {
+                // --- BUG FIX V0.4: Add position_number to simulated response ---
                 const simulatedResponse = {
                     summary: "Your career question reveals a path of new beginnings, though it is not without challenges. The core of the matter suggests you are ready to take a leap of faith, but past habits and a fear of sudden change are holding you back. The path forward requires you to embrace this change and trust your intuition.",
-                    deep_dive: appState.selectedSpread.map.map((position, index) => {
-                        const cards = ["The Fool", "The Tower", "The High Priestess", "The Magician", "The Lovers"];
+                    deep_dive: appState.selectedSpread.map((position, index) => {
+                        const cards = ["The Fool", "The Tower", "The High Priestess", "The Magician", "The Lovers", "The Chariot", "Strength", "The Hermit", "Wheel of Fortune", "Justice"];
                         const orientations = ["Upright", "Reversed", "Sideways"];
                         const card = cards[index % cards.length];
                         const orientation = orientations[index % orientations.length];
                         return {
+                            position_number: position.position, // Added this
                             position_name: position.name,
                             card_name: card,
                             orientation: orientation,
@@ -627,10 +626,11 @@
                 loadingSpinner.style.display = 'none';
 
             }, 2000); // Simulate 2-second API call
-            */
+            
             // --- REAL API CALL (COMMENTED OUT FOR NOW) ---
+            /*
             try {
-                const apiKey = "AIzaSyBP0p_ZMBYw-7a3wVc6naoLd8cPmT0rAb4"; // Will be auto-provided
+                const apiKey = ""; // Will be auto-provided
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
                 const payload = {
@@ -701,21 +701,25 @@
 
                 // Populate Deep Dive
                 deepDiveCards.innerHTML = ''; // Clear old results
-                reading.deep_dive.forEach(card => {
+                
+                // --- BUG FIX V0.4: New Visual Layout for Results ---
+                reading.deep_dive.forEach((card, index) => {
                     const cardName = card.card_name || "Unknown Card";
                     const orientation = card.orientation || "N/A";
-                    const position = card.position_name || "N/A";
+                    const positionNum = card.position_number || (index + 1);
+                    const positionName = card.position_name || "N/A";
                     const meaning = card.meaning || "No interpretation provided.";
                     
-                    // -- ACCESSIBILITY: Fix typo 'classL' to 'class' --
                     const cardHtml = `
                         <div class="bg-gray-700 p-4 rounded-lg shadow-md">
-                            <div class="flex justify-between items-center mb-1">
-                                <h3 class="text-xl font-semibold text-white">${cardName}</h3>
-                                <span class="text-xs font-medium text-gray-400 bg-gray-800 px-2 py-0.5 rounded-full">${position}</span>
+                            <div class="flex items-start">
+                                <span class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-indigo-600 text-white font-bold text-lg mr-4">${positionNum}</span>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white">${positionName}</h3>
+                                    <p class="text-md font-medium text-indigo-300">${cardName} (${orientation})</p>
+                                </div>
                             </div>
-                            <p class="text-md text-indigo-300 mb-2">${orientation}</p>
-                            <p class="text-sm text-gray-300">${meaning}</p>
+                            <p class_ ="text-sm text-gray-300 mt-3 pl-14">${meaning}</p>
                         </div>
                     `;
                     deepDiveCards.innerHTML += cardHtml;
@@ -746,6 +750,4 @@
     </script>
 </body>
 </html>
-
-
 
