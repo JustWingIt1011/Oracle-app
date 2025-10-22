@@ -1,4 +1,4 @@
-<!-- Version 0.5 -->
+<!-- Version 0.7 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,6 +11,7 @@
         body {
             font-family: 'Inter', sans-serif;
             background-color: #111827; /* Dark gray-blue */
+            padding-bottom: 4rem; /* Add padding for footer */
         }
         .screen {
             display: none; /* All screens hidden by default */
@@ -39,10 +40,24 @@
             resize: none;
         }
         .radio-label {
-            @apply block w-full p-4 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer hover:bg-gray-600 focus-within:ring-2 focus-within:ring-indigo-500;
+            @apply relative block w-full p-4 pl-12 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer hover:bg-gray-600 focus-within:ring-2 focus-within:ring-indigo-500;
+            /* Add padding-left for the checkmark */
         }
         input[type="radio"]:checked + .radio-label {
             @apply bg-indigo-700 border-indigo-500 ring-2 ring-indigo-500;
+        }
+        /* Style for the checkmark */
+        input[type="radio"]:checked + .radio-label::before {
+             content: '';
+             position: absolute;
+             left: 0.75rem; /* Adjust position */
+             top: 50%;
+             transform: translateY(-50%);
+             width: 1.25rem; /* Size of checkmark */
+             height: 1.25rem;
+             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='3' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M4.5 12.75l6 6 9-13.5' /%3E%3C/svg%3E");
+             background-size: contain;
+             background-repeat: no-repeat;
         }
         .sr-only {
             position: absolute;
@@ -72,7 +87,7 @@
             <div id="screen-intention" class="screen" role="region" aria-label="Step 1: Set Intention">
                 <h2 class="text-2xl font-semibold text-white mb-4" tabindex="-1">What is your intention?</h2>
                 <p class="text-gray-300 mb-4">Select the area of your life that needs clarity. This will focus the reading.</p>
-                
+
                 <fieldset id="intention-options" class="space-y-3">
                     <legend class="sr-only">Intention Options</legend>
                     <div class="relative">
@@ -105,7 +120,7 @@
                 </fieldset>
 
                 <textarea id="user-intention-other" rows="3" placeholder="Type your specific question here..." class="input-base mt-3 hidden"></textarea>
-                
+
                 <button id="btn-to-spread" class="btn btn-primary mt-4">Set Intention & Choose Spread</button>
             </div>
 
@@ -113,12 +128,12 @@
             <div id="screen-spread-choice" class="screen" role="region" aria-label="Step 2: Choose Spread">
                 <h2 class="text-2xl font-semibold text-white mb-4" tabindex="-1">Choose Your Spread</h2>
                 <p class="text-gray-300 mb-4">The spread provides the structure for your reading. Select one that fits your question.</p>
-                
+
                 <fieldset id="spread-library" class="space-y-3">
                     <legend class="sr-only">Spread Options</legend>
                     <!-- This will be dynamically populated by SPREAD_LIBRARY -->
                 </fieldset>
-                
+
                 <button id="btn-to-upload" class="btn btn-primary mt-4 opacity-50 cursor-not-allowed" disabled>Continue to Upload</button>
                 <button id="btn-back-to-intention" class="btn btn-secondary mt-2">Back</button>
             </div>
@@ -156,11 +171,11 @@
                 <button id="btn-reveal" class="btn btn-primary mt-6 opacity-50 cursor-not-allowed" disabled>Reveal My Reading</button>
                 <button id="btn-back-to-spread" class="btn btn-secondary mt-2">Back</button>
             </div>
-            
+
             <!-- SCREEN 4: READING -->
             <div id="screen-reading" class="screen" role="region" aria-label="Step 4: Your Reading">
                 <h2 class="text-2xl font-semibold text-white mb-4" tabindex="-1">Your Reading</h2>
-                
+
                 <div class="mb-4 flex justify-center" role="group" aria-label="Reading Format">
                     <div classs="bg-gray-700 p-1 rounded-lg flex space-x-1">
                         <button id="toggle-summary" class="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" aria-pressed="true">Summary</button>
@@ -200,6 +215,11 @@
             </div>
 
         </main>
+
+        <!-- Version Footer -->
+        <footer class="text-center text-xs text-gray-500 mt-4">
+            Version 0.7
+        </footer>
     </div>
 
     <script>
@@ -284,7 +304,7 @@
                             <span class="block font-bold text-white">8</span>
                             <span class="block text-indigo-300">External</span>
                         </div>
-                        
+
                         <div class="p-2 border border-gray-600 rounded-lg">
                             <span class="block font-bold text-white">4</span>
                             <span class="block text-indigo-300">Recent Past</span>
@@ -294,7 +314,7 @@
                             <span class="block font-bold text-white">6</span>
                             <span class="block text-indigo-300">Near Future</span>
                         </div>
-                        
+
                          <div></div>
                         <div class="p-2 border border-gray-600 rounded-lg">
                             <span class="block font-bold text-white">3</span>
@@ -310,7 +330,7 @@
         const appState = {
             currentScreen: 'screen-intention',
             userIntention: '',
-            selectedSpread: null, 
+            selectedSpread: null,
             uploadedImage: null,
             reading: null
         };
@@ -333,7 +353,7 @@
         const spreadLibraryContainer = document.getElementById('spread-library');
         const visualGuideContainer = document.getElementById('spread-visual-guide');
         const selectedSpreadName = document.getElementById('selected-spread-name');
-        
+
         // --- NAVIGATION ---
         const btnToIntention = document.getElementById('btn-back-to-intention');
         const btnToSpread = document.getElementById('btn-to-spread');
@@ -357,15 +377,14 @@
                 }
             });
         });
-        
-        // --- FIX V0.5: More Robust Label Click Handler ---
+
+        // --- FIX V0.5: More Robust Label Click Handler (Keep this fix) ---
         document.querySelectorAll('#intention-options .radio-label').forEach(label => {
             label.addEventListener('click', (e) => {
                 const radioId = label.getAttribute('for');
                 const radio = document.getElementById(radioId);
-                if (radio && !radio.checked) { // Only act if not already checked
+                if (radio && !radio.checked) {
                     radio.checked = true;
-                    // Manually dispatch the change event
                     radio.dispatchEvent(new Event('change', { bubbles: true }));
                 }
             });
@@ -380,7 +399,7 @@
             newScreen.style.display = 'block';
             appState.currentScreen = screenId;
             window.scrollTo(0, 0);
-            
+
             const heading = newScreen.querySelector('h2');
             if(heading) {
                 heading.setAttribute('tabindex', -1);
@@ -389,7 +408,7 @@
         }
 
         // --- NAVIGATION EVENT LISTENERS ---
-        
+
         // Screen 1 -> Screen 2
         btnToSpread.addEventListener('click', () => {
             const selectedIntention = document.querySelector('input[name="intention"]:checked');
@@ -408,7 +427,7 @@
             } else {
                 appState.userIntention = selectedIntention.value;
             }
-            
+
             populateSpreadLibrary();
             showScreen('screen-spread-choice');
         });
@@ -419,7 +438,6 @@
         // Screen 2 -> Screen 3
         btnToUpload.addEventListener('click', () => {
             if (!appState.selectedSpread) {
-                // This check should ideally not be needed if button is disabled, but good fallback
                 alert('Please select a spread.');
                 return;
             }
@@ -427,48 +445,55 @@
             visualGuideContainer.innerHTML = appState.selectedSpread.visual_guide;
             showScreen('screen-upload');
         });
-        
+
         // Screen 3 -> Screen 2 (Back)
         btnToSpreadBack.addEventListener('click', () => showScreen('screen-spread-choice'));
 
         // Screen 4 -> Screen 1 (New Reading)
         btnNewReading.addEventListener('click', () => {
-            // --- FIX V0.5: Ensure radio buttons are properly reset ---
+             // Reset state
             appState.userIntention = '';
             appState.selectedSpread = null;
             appState.uploadedImage = null;
             appState.reading = null;
 
-            // Clear intention selection
+            // Reset Intention Screen
             const checkedIntention = document.querySelector('input[name="intention"]:checked');
             if (checkedIntention) checkedIntention.checked = false;
-            intentionOptions.forEach(radio => { // Ensure styles are reset if needed
+             intentionOptions.forEach(radio => {
                  const label = document.querySelector(`label[for="${radio.id}"]`);
-                 if(label) label.classList.remove('bg-indigo-700', 'border-indigo-500', 'ring-2');
+                 if(label) { // Reset visual style
+                     label.classList.remove('bg-indigo-700', 'border-indigo-500', 'ring-2', 'ring-indigo-500');
+                     label.classList.add('bg-gray-700', 'border-gray-600');
+                 }
             });
-
             userIntentionOther.value = '';
             userIntentionOther.classList.add('hidden');
 
-            // Clear spread selection (state cleared, UI will repopulate)
-            
-            // Clear upload state
-            imageUpload.value = null; // Clear file input
-            imagePreview.src = '#'; // Clear preview image source
+             // Reset Spread Screen (Disable button)
+             btnToUpload.classList.add('opacity-50', 'cursor-not-allowed');
+             btnToUpload.disabled = true;
+             // We'll repopulate spreads when screen is shown, but ensure no visual selection remains
+             // (This should be handled by CSS :checked, but added JS clear for paranoia)
+             const checkedSpread = document.querySelector('input[name="spread"]:checked');
+             if(checkedSpread) checkedSpread.checked = false;
+
+
+            // Reset Upload Screen
+            imageUpload.value = null;
+            imagePreview.src = '#';
             imagePreviewContainer.classList.add('hidden');
             imageUploadText.textContent = "Click to select an image";
-            
-            // Disable buttons
             revealButton.classList.add('opacity-50', 'cursor-not-allowed');
             revealButton.disabled = true;
-            btnToUpload.classList.add('opacity-50', 'cursor-not-allowed');
-            btnToUpload.disabled = true;
-            
-            // Clear results/errors
+
+            // Reset Reading Screen
             resultsContent.classList.add('hidden');
             errorDisplay.classList.add('hidden');
-            summaryText.textContent = ''; // Clear text content
-            deepDiveCards.innerHTML = ''; // Clear dynamic cards
+            summaryText.textContent = '';
+            deepDiveCards.innerHTML = '';
+            // Reset toggle buttons to default (Summary active)
+            toggleSummary.click(); // Programmatically click summary
 
             // Navigate
             showScreen('screen-intention');
@@ -476,13 +501,14 @@
 
 
         // --- SPREAD SELECTION ---
-        
+
         function populateSpreadLibrary() {
             spreadLibraryContainer.innerHTML = ''; // Clear old
             Object.values(SPREAD_LIBRARY).forEach(spread => {
+                const isChecked = appState.selectedSpread && appState.selectedSpread.id === spread.id; // Preserve selection if going back/forth
                 const spreadHtml = `
                     <div class="relative">
-                        <input type="radio" id="${spread.id}" name="spread" value="${spread.id}" class="sr-only">
+                        <input type="radio" id="${spread.id}" name="spread" value="${spread.id}" class="sr-only" ${isChecked ? 'checked' : ''}>
                         <label for="${spread.id}" class="radio-label">
                             <span class="font-semibold text-white text-lg">${spread.name}</span>
                             <span class="block text-sm text-gray-300">${spread.description}</span>
@@ -492,14 +518,13 @@
                 spreadLibraryContainer.innerHTML += spreadHtml;
             });
 
-            // --- FIX V0.5: More Robust Label Click Handler ---
+            // --- FIX V0.5: More Robust Label Click Handler (Keep this fix) ---
              document.querySelectorAll('#spread-library .radio-label').forEach(label => {
                 label.addEventListener('click', (e) => {
                     const radioId = label.getAttribute('for');
                     const radio = document.getElementById(radioId);
-                    if (radio && !radio.checked) { // Only act if not already checked
+                    if (radio && !radio.checked) {
                         radio.checked = true;
-                        // Manually dispatch the change event
                         radio.dispatchEvent(new Event('change', { bubbles: true }));
                     }
                 });
@@ -510,11 +535,19 @@
                     selectSpread(e.target.value);
                 });
             });
+
+            // Re-enable button if a spread was already selected
+            if(appState.selectedSpread) {
+                 btnToUpload.classList.remove('opacity-50', 'cursor-not-allowed');
+                 btnToUpload.disabled = false;
+            } else {
+                 btnToUpload.classList.add('opacity-50', 'cursor-not-allowed');
+                 btnToUpload.disabled = true;
+            }
         }
 
         function selectSpread(spreadId) {
             appState.selectedSpread = SPREAD_LIBRARY[spreadId];
-            
             btnToUpload.classList.remove('opacity-50', 'cursor-not-allowed');
             btnToUpload.disabled = false;
         }
@@ -527,14 +560,39 @@
                 reader.onload = (e) => {
                     imagePreview.src = e.target.result;
                     imagePreviewContainer.classList.remove('hidden');
-                    appState.uploadedImage = e.target.result.split(',')[1];
+                    // Store only the base64 part
+                    const base64String = e.target.result.split(',')[1];
+                     if (!base64String) {
+                         console.error("Failed to extract base64 data from image.");
+                         displayError("Could not process the selected image. Please try a different one.");
+                         appState.uploadedImage = null;
+                         revealButton.classList.add('opacity-50', 'cursor-not-allowed');
+                         revealButton.disabled = true;
+                         return;
+                     }
+                    appState.uploadedImage = base64String;
                     revealButton.classList.remove('opacity-50', 'cursor-not-allowed');
                     revealButton.disabled = false;
                     imageUploadText.textContent = file.name;
                 };
+                 reader.onerror = (error) => {
+                     console.error("FileReader error:", error);
+                     displayError("Could not read the selected image file. Please try again.");
+                     appState.uploadedImage = null;
+                     revealButton.classList.add('opacity-50', 'cursor-not-allowed');
+                     revealButton.disabled = true;
+                 };
                 reader.readAsDataURL(file);
+            } else {
+                // Handle case where user cancels file selection
+                appState.uploadedImage = null;
+                revealButton.classList.add('opacity-50', 'cursor-not-allowed');
+                revealButton.disabled = true;
+                imagePreviewContainer.classList.add('hidden');
+                imageUploadText.textContent = "Click to select an image";
             }
         });
+
 
         // --- READING TOGGLE (SUMMARY/DEEP DIVE) ---
         toggleSummary.addEventListener('click', () => {
@@ -543,12 +601,12 @@
             toggleSummary.setAttribute('aria-pressed', 'true');
             toggleSummary.classList.add('bg-indigo-600', 'text-white');
             toggleSummary.classList.remove('text-gray-300');
-            
+
             toggleDeepDive.setAttribute('aria-pressed', 'false');
             toggleDeepDive.classList.add('text-gray-300');
             toggleDeepDive.classList.remove('bg-indigo-600', 'text-white');
         });
-        
+
         toggleDeepDive.addEventListener('click', () => {
             summaryView.style.display = 'none';
             deepDiveView.style.display = 'block';
@@ -571,21 +629,30 @@
         });
 
         async function performReading() {
+            console.log("Starting performReading..."); // DEBUG V0.6
             showScreen('screen-reading');
             loadingSpinner.style.display = 'block';
             resultsContent.style.display = 'none';
             errorDisplay.style.display = 'none';
 
             const userIntention = appState.userIntention;
-            const spreadName = appState.selectedSpread.name;
-            const spreadMapString = appState.selectedSpread.map
+            const spreadName = appState.selectedSpread ? appState.selectedSpread.name : 'Unknown Spread'; // DEBUG V0.6 Add fallback
+            const spreadMapString = appState.selectedSpread ? appState.selectedSpread.map
                 .map(p => `Position ${p.position} (${p.name}): ${p.description}`)
-                .join('\n');
+                .join('\n') : 'No spread map available.'; // DEBUG V0.6 Add fallback
+
+             // DEBUG V0.6 Check if selectedSpread is valid
+             if (!appState.selectedSpread || !appState.selectedSpread.map || !Array.isArray(appState.selectedSpread.map)) {
+                 console.error("performReading Error: appState.selectedSpread is invalid", appState.selectedSpread);
+                 displayError('Error: Invalid spread selected. Please go back and choose a spread.');
+                 loadingSpinner.style.display = 'none'; // Hide spinner on early exit
+                 return;
+             }
 
             const prompt = `
                 You are The Oracle, a wise and insightful Tarot reader.
                 A user has provided an image of a tarot spread, a question, and the spread's structure.
-                
+
                 USER'S QUESTION/INTENTION: "${userIntention}"
                 SPREAD: "${spreadName}"
                 SPREAD MAP:
@@ -594,61 +661,72 @@
                 Analyze the provided image of their tarot spread.
                 Your task is to identify exactly ${appState.selectedSpread.card_count} cards, their orientations (Upright, Reversed, or Sideways), and their positions in the spread.
                 Match the card's physical position in the image to its corresponding position in the SPREAD MAP.
-                
+
                 Synthesize ALL this information (the question, the spread map, and the cards) into a cohesive, narrative reading.
-                
+
                 Respond ONLY with a valid JSON object with two keys: "summary" and "deep_dive".
-                
+
                 1.  "summary": A single, insightful paragraph (3-5 sentences) that provides the main message of the reading, directly answering the user's question.
                 2.  "deep_dive": An array of objects, one for each position in the spread. Each object must have "position_number", "position_name", "card_name", "orientation", and "meaning".
-                
+
                 "meaning" MUST be a detailed interpretation of that specific card in that specific position, synthesized with the user's question.
-                
+
                 If you detect a card is "Sideways", interpret it as "blocked or delayed energy" related to that card's meaning.
-                
+
                 Example for deep_dive array:
                 [
                     { "position_number": 1, "position_name": "The Present / The Self", "card_name": "The Fool", "orientation": "Upright", "meaning": "In the context of your career, this represents a new beginning. You are at the start of a new journey..." },
                     { "position_number": 2, "position_name": "The Challenge", "card_name": "The Tower", "orientation": "Reversed", "meaning": "Your main challenge is an avoidance of a necessary change. You are resisting a "Tower" moment..." }
                 ]
             `;
-            
-            // --- FIX V0.5: Wrap simulation in try/catch and use finally ---
+
+            // --- DEBUG V0.6: Add specific logging and ensure finally always runs ---
             try {
                 // --- SIMULATED RESPONSE (FOR OFFLINE DEVELOPMENT) ---
+                console.log("Simulating API call..."); // DEBUG V0.6
                 await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate async delay
-                
+
+                // Ensure selectedSpread and map are valid before simulation
+                 if (!appState.selectedSpread || !appState.selectedSpread.map || !Array.isArray(appState.selectedSpread.map)) {
+                     throw new Error("Cannot generate simulation: selectedSpread.map is invalid.");
+                 }
+
                 const simulatedResponse = {
-                    summary: "Your career question reveals a path of new beginnings, though it is not without challenges. The core of the matter suggests you are ready to take a leap of faith, but past habits and a fear of sudden change are holding you back. The path forward requires you to embrace this change and trust your intuition.",
-                    deep_dive: appState.selectedSpread.map((position, index) => {
+                    summary: `Simulated summary for your question about "${appState.userIntention}". This reading suggests potential opportunities and challenges related to your focus. Pay attention to the energies of change and intuition.`,
+                    deep_dive: appState.selectedSpread.map.map((position, index) => {
+                        // Keep simulation simple and predictable
                         const cards = ["The Fool", "The Tower", "The High Priestess", "The Magician", "The Lovers", "The Chariot", "Strength", "The Hermit", "Wheel of Fortune", "Justice"];
                         const orientations = ["Upright", "Reversed", "Sideways"];
                         const card = cards[index % cards.length];
                         const orientation = orientations[index % orientations.length];
+                         // Ensure all required fields are present
                         return {
-                            position_number: position.position, 
-                            position_name: position.name,
+                            position_number: position.position,
+                            position_name: position.name || "Unknown Position",
                             card_name: card,
                             orientation: orientation,
-                            meaning: `This is a simulated interpretation for ${card} (${orientation}) in the '${position.name}' position, relating to your question about "${appState.userIntention}". It represents the card's energy in this context.`
+                            meaning: `This is a simulated interpretation for ${card} (${orientation}) in the '${position.name || 'Unknown Position'}' position, relating to your question about "${appState.userIntention}". It represents the card's energy in this context.`
                         };
                     })
                 };
-                
+
+                 console.log("Simulation complete. Generated response:", simulatedResponse); // DEBUG V0.6
                 appState.reading = simulatedResponse;
-                displayReading(simulatedResponse);
+                displayReading(); // Changed: Pass no argument, let it read from appState
 
             } catch (simError) {
-                 console.error('Error during simulation:', simError);
-                 displayError('An unexpected error occurred during the simulation.');
+                 console.error('Error during simulation generation or displayReading call:', simError); // DEBUG V0.6 More specific log
+                 displayError(`An unexpected error occurred during the simulation: ${simError.message}`);
             } finally {
+                 console.log("Hiding spinner in finally block."); // DEBUG V0.6
                  loadingSpinner.style.display = 'none'; // Ensure spinner hides
             }
 
-            
+
             // --- REAL API CALL (COMMENTED OUT FOR NOW) ---
             /*
             try {
+                console.log("Attempting REAL API call..."); // DEBUG V0.6
                 const apiKey = ""; // Will be auto-provided
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
@@ -665,39 +743,47 @@
                         responseMimeType: "application/json",
                     }
                 };
+                console.log("Sending payload to API:", payload); // DEBUG V0.6
 
                 const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
+                console.log("API response status:", response.status); // DEBUG V0.6
 
                 if (!response.ok) {
                     const errorBody = await response.text();
+                    console.error("API Error Response Body:", errorBody); // DEBUG V0.6
                     throw new Error(`API Error: ${response.status} ${response.statusText}. Body: ${errorBody}`);
                 }
 
                 const result = await response.json();
-                
-                if (!result.candidates || !result.candidates[0].content || !result.candidates[0].content.parts[0]) {
+                console.log("API Result:", result); // DEBUG V0.6
+
+                if (!result.candidates || !result.candidates[0].content || !result.candidates[0].content.parts[0] || !result.candidates[0].content.parts[0].text) {
+                     console.error("Malformed API response structure:", result); // DEBUG V0.6
                      throw new Error("The Oracle's response was empty or malformed.");
                 }
 
                 const jsonString = result.candidates[0].content.parts[0].text;
-                
+                console.log("Received JSON string from API:", jsonString); // DEBUG V0.6
+
                 try {
                     const reading = JSON.parse(jsonString);
+                     console.log("Parsed reading:", reading); // DEBUG V0.6
                     appState.reading = reading;
-                    displayReading(reading);
+                    displayReading(); // Changed: Pass no argument
                 } catch (jsonError) {
-                    console.error('JSON Parse Error:', jsonString);
-                    throw new Error(`The Oracle's response was in a strange format. ${jsonString}`);
+                    console.error('JSON Parse Error:', jsonError, "Raw string:", jsonString); // DEBUG V0.6
+                    throw new Error(`The Oracle's response was in a strange format. Could not parse JSON.`);
                 }
 
             } catch (error) {
-                console.error('Error in performReading:', error);
-                displayError(`The Oracle's vision is clouded. ${error.message}. Please try again with a clearer photo.`);
+                console.error('Error in performReading (REAL API CALL):', error); // DEBUG V0.6
+                displayError(`The Oracle's vision is clouded. ${error.message}. Please try again with a clearer photo or check the console for details.`);
             } finally {
+                 console.log("Hiding spinner in finally block (REAL API)."); // DEBUG V0.6
                 loadingSpinner.style.display = 'none'; // Ensure spinner hides
             }
             */
@@ -708,59 +794,82 @@
          * Renders the AI's response in the UI.
          */
         function displayReading() {
-            // --- FIX V0.5: Add try/catch within displayReading ---
+            // --- DEBUG V0.6: Add specific logging here ---
+            console.log("Attempting to display reading. Current appState.reading:", appState.reading);
             try {
+                // Ensure reading is accessed from the global state reliably
                 const reading = appState.reading;
-                if (!reading || !reading.summary || !reading.deep_dive) {
-                    // Use displayError for consistency
-                    displayError("The Oracle's response was incomplete. Please try again."); 
+                if (!reading || typeof reading !== 'object') {
+                    console.error("displayReading Error: appState.reading is null or not an object.", reading);
+                    displayError("Error: No valid reading data found in application state.");
                     return;
                 }
-                
+                if (!reading.summary || typeof reading.summary !== 'string') {
+                    console.error("displayReading Error: reading.summary is missing or invalid.", reading.summary);
+                    displayError("The Oracle's summary response was incomplete.");
+                    return;
+                }
+                 if (!reading.deep_dive || !Array.isArray(reading.deep_dive)) {
+                     console.error("displayReading Error: reading.deep_dive is missing or not an array.", reading.deep_dive);
+                    displayError("The Oracle's detailed response was incomplete or malformed.");
+                    return;
+                 }
+
+
                 // Populate Summary
                 summaryText.textContent = reading.summary;
 
                 // Populate Deep Dive
                 deepDiveCards.innerHTML = ''; // Clear old results
-                
-                reading.deep_dive.forEach((card, index) => {
-                    const cardName = card.card_name || "Unknown Card";
-                    const orientation = card.orientation || "N/A";
-                    const positionNum = card.position_number || (index + 1); // Fallback if AI missed it
-                    const positionName = card.position_name || "N/A";
-                    const meaning = card.meaning || "No interpretation provided.";
-                    
-                    const cardHtml = `
-                        <div class="bg-gray-700 p-4 rounded-lg shadow-md">
-                            <div class="flex items-start">
-                                <span class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-indigo-600 text-white font-bold text-lg mr-4">${positionNum}</span>
-                                <div>
-                                    <h3 class="text-lg font-semibold text-white">${positionName}</h3>
-                                    <p class="text-md font-medium text-indigo-300">${cardName} (${orientation})</p>
+
+                 // Check if deep_dive array is empty
+                 if (reading.deep_dive.length === 0) {
+                     console.warn("displayReading: deep_dive array is empty.");
+                     // Optionally display a message, or just show nothing in deep dive
+                      deepDiveCards.innerHTML = '<p class="text-gray-400 italic">No detailed card interpretations were provided.</p>';
+                 } else {
+                    reading.deep_dive.forEach((card, index) => {
+                         // Add more defensive checks for card properties
+                        const cardName = card && card.card_name ? card.card_name : "Unknown Card";
+                        const orientation = card && card.orientation ? card.orientation : "N/A";
+                        const positionNum = card && card.position_number ? card.position_number : (index + 1); // Fallback
+                        const positionName = card && card.position_name ? card.position_name : "Unknown Position";
+                        const meaning = card && card.meaning ? card.meaning : "No interpretation provided.";
+
+                        const cardHtml = `
+                            <div class="bg-gray-700 p-4 rounded-lg shadow-md">
+                                <div class="flex items-start">
+                                    <span class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-indigo-600 text-white font-bold text-lg mr-4">${positionNum}</span>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-white">${positionName}</h3>
+                                        <p class="text-md font-medium text-indigo-300">${cardName} (${orientation})</p>
+                                    </div>
                                 </div>
+                                <p class="text-sm text-gray-300 mt-3 pl-14">${meaning}</p>
                             </div>
-                            <p class="text-sm text-gray-300 mt-3 pl-14">${meaning}</p> <!-- Fixed typo class_ -> class -->
-                        </div>
-                    `;
-                    deepDiveCards.innerHTML += cardHtml;
-                });
+                        `;
+                        deepDiveCards.innerHTML += cardHtml;
+                    });
+                 }
+
 
                 resultsContent.style.display = 'block';
                 errorDisplay.style.display = 'none'; // Ensure error is hidden on success
                 toggleSummary.click(); // Default to summary view
 
             } catch (error) {
-                console.error('Error displaying reading:', error);
-                 // Use displayError for consistency
-                displayError('There was a problem displaying the reading. Please try again.');
+                console.error('Error during displayReading render:', error); // DEBUG V0.6 More specific log
+                displayError(`There was a problem displaying the reading results: ${error.message}`);
                 resultsContent.style.display = 'none'; // Hide potentially broken results
             }
         }
+
 
         /**
          * Shows a user-friendly error message.
          */
         function displayError(message) {
+             console.error("Displaying Error:", message); // DEBUG V0.6 Log errors shown to user
             errorMessage.textContent = message;
             errorDisplay.style.display = 'block';
             loadingSpinner.style.display = 'none'; // Ensure spinner is hidden on error
