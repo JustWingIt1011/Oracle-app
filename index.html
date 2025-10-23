@@ -1,4 +1,4 @@
-<!-- Version 1.3 -->
+<!-- Version 1.4 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,12 +46,12 @@
         .radio-label {
             @apply block w-full p-4 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer text-center transition-colors duration-200 hover:bg-gray-600 focus-within:ring-2 focus-within:ring-indigo-500;
         }
-        /* V1.3: Enhanced Selected State */
+        /* V1.4: STRONGLY Enhanced Selected State */
         input[type="radio"]:checked + .radio-label {
-            @apply bg-indigo-700 border-indigo-500 border-2 text-white ring-2 ring-indigo-500; /* Thicker border, ensure text white */
+            @apply bg-indigo-600 border-indigo-400 border-2 text-white ring-2 ring-indigo-400; /* Brighter BG, Contrast Border */
         }
-         input[type="radio"]:checked + .radio-label .text-gray-300 {
-             @apply text-indigo-100; /* Lighter subtext when selected */
+         input[type="radio"]:checked + .radio-label span {
+             @apply text-white; /* Force all text inside to white */
          }
 
         .sr-only {
@@ -160,7 +160,7 @@
                         <li>Avoid shadows or glare on the cards.</li>
                         <li>Keep the camera parallel to the table.</li>
                         <li>Make sure all cards are fully visible.</li>
-                        <li><strong class="text-indigo-300">Avoid significant overlap</strong> that hides key card details (the AI is smart, but needs to see the symbols!).</li> {/* V1.3: Added tip */}
+                        <li><strong class="text-indigo-300">Avoid significant overlap</strong> that hides key card details (the AI is smart, but needs to see the symbols!).</li> {/* V1.4: Fixed stray tag */}
                     </ul>
                 </details>
 
@@ -217,7 +217,7 @@
         </main>
 
         <footer class="text-center text-xs text-gray-500 mt-4">
-            Version 1.3
+            Version 1.4
         </footer>
     </div>
 
@@ -392,10 +392,8 @@
         async function performReading() {
             showScreen('screen-reading'); loadingSpinner.style.display = 'block'; resultsContent.style.display = 'none'; errorDisplay.style.display = 'none';
             const userIntention = appState.userIntention; const spreadName = appState.selectedSpread ? appState.selectedSpread.name : 'Unknown';
-            // V1.3: Include descriptions in the map string for the AI
             const spreadMapString = appState.selectedSpread ? appState.selectedSpread.map.map(p => `Pos ${p.position} (${p.name}): ${SPREAD_LIBRARY[appState.selectedSpread.id]?.map.find(m => m.position === p.position)?.description || ''}`).join('\n') : '';
             if (!appState.selectedSpread || !appState.selectedSpread.map) { displayError('Invalid spread.'); loadingSpinner.style.display = 'none'; return; }
-            // V1.3: Adjusted prompt slightly for clarity and to include descriptions
             const prompt = `You are The Oracle, a wise and insightful Tarot reader. A user has provided an image of a tarot spread, a question, and the spread's structure. USER'S QUESTION/INTENTION: "${userIntention}" SPREAD: "${spreadName}" SPREAD MAP (Position Number, Name, Meaning/Focus):\n${spreadMapString}\nAnalyze the provided image. Identify exactly ${appState.selectedSpread.card_count} cards, their orientations (Upright, Reversed, or Sideways), and match them to their corresponding position in the SPREAD MAP. Synthesize ALL this information (question, spread map, cards) into a cohesive narrative reading. Respond ONLY with a valid JSON object: {"summary": "...", "deep_dive": [{"position_number": N, "position_name": "...", "card_name": "...", "orientation": "...", "meaning": "..."}, ...]}. "summary" is 1 insightful paragraph (3-5 sentences) directly answering "${userIntention}". "deep_dive" is an array, 1 object per position. "meaning" MUST be a detailed interpretation of that card in that specific position, synthesized with "${userIntention}". Interpret "Sideways" as "blocked/delayed energy" related to the card's meaning and "${userIntention}". Example deep_dive: [{"position_number": 1, "position_name": "Present", "card_name": "The Fool", "orientation": "Upright", "meaning": "Regarding your career question, this signifies a leap of faith..."}]`;
             try {
                  // --- REAL API CALL ---
@@ -424,7 +422,6 @@
                 deepDiveSpreadGuide.innerHTML = appState.selectedSpread.visual_guide;
                 deepDiveCards.innerHTML = '';
                 appState.reading.deep_dive.forEach(card => {
-                    // V1.3: Ensure position_name is displayed correctly
                     const positionName = appState.selectedSpread.map.find(p => p.position === card.position_number)?.name || card.position_name || 'Unknown Position';
                     deepDiveCards.innerHTML += `<div class="p-4 bg-gray-700/50 rounded-lg border border-gray-600"><div class="flex items-center mb-2"><span class="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded-full bg-indigo-600 text-white font-bold text-sm mr-3">${card.position_number}</span><div><h4 class="text-lg font-semibold text-white">${card.card_name} (${card.orientation})</h4><p class="text-sm font-medium text-indigo-300">${positionName}</p></div></div><p class="text-gray-300 ml-11">${card.meaning}</p></div>`;
                 });
@@ -439,5 +436,4 @@
     </script>
 </body>
 </html>
-
 
