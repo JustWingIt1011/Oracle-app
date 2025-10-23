@@ -1,4 +1,4 @@
-<!-- Version 2.1 -->
+<!-- Version 2.3 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,14 +21,14 @@
         }
         .btn {
             @apply inline-block w-full text-center px-6 py-3 rounded-lg font-semibold shadow-md transition-all duration-300;
-            @apply focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800;
+            @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800;
         }
         .btn-primary {
-            @apply bg-indigo-600 text-white hover:bg-indigo-500;
+            @apply bg-indigo-600 text-white hover:bg-indigo-500 focus:ring-indigo-500;
         }
-        /* V2.1: Updated secondary button style for distinction */
+        /* V2.3: Reinstated border for secondary button affordance */
         .btn-secondary {
-            @apply bg-transparent text-gray-300 border border-gray-500 hover:bg-gray-700 hover:text-white;
+            @apply bg-transparent text-gray-300 border border-gray-600 hover:bg-gray-700 hover:border-indigo-500 hover:text-white focus:ring-indigo-500 shadow-none;
         }
         /* Style for disabled primary button */
         .btn-primary:disabled {
@@ -45,21 +45,29 @@
         }
         /* Radio Button Style */
         .radio-label {
-            /* V2.1: Ensure flex row layout, items center vertically */
-            @apply flex flex-row items-center justify-center w-full p-4 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer text-center transition-colors duration-200 hover:bg-gray-600 focus-within:ring-2 focus-within:ring-indigo-500;
+            /* V2.3: Ensure vertical centering */
+            @apply flex flex-row items-center w-full p-4 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer text-center transition-colors duration-200 hover:bg-gray-600 focus-within:ring-2 focus-within:ring-indigo-500;
         }
         /* Style for the selection icon */
         .selection-icon {
-             @apply hidden mr-2 text-white flex-shrink-0; /* V2.1: Adjusted margin, added shrink-0 */
-             /* Size is now set directly on the SVG element */
+             @apply hidden mr-3 text-white flex-shrink-0; /* Keep margin */
+             /* Size is set directly on the SVG element */
         }
         /* Apply selected styles when checked */
         input[type="radio"]:checked + .radio-label {
             @apply bg-indigo-600 border-indigo-400 border-2 text-white ring-2 ring-indigo-400;
         }
          /* JS will handle showing the icon */
-         input[type="radio"]:checked + .radio-label span {
-             @apply text-white; /* Force all text inside to white */
+         input[type="radio"]:checked + .radio-label span,
+         input[type="radio"]:checked + .radio-label .label-subtext { /* V2.3: Ensure subtext is also white */
+             @apply text-white;
+         }
+         /* Container for text next to icon */
+         .label-text-container {
+             @apply text-left flex-grow;
+         }
+         .label-subtext { /* V2.3: Specific class for subtext styling */
+            @apply block text-sm text-gray-300;
          }
         .sr-only {
             position: absolute;
@@ -98,9 +106,9 @@
                             <svg class="selection-icon" width="12" height="12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                             </svg>
-                            <div class="text-left flex-grow"> <!-- V2.1: Text container -->
+                            <div class="label-text-container">
                                 <span class="font-semibold">General Guidance</span>
-                                <span class="block text-sm text-gray-300">"What do I need to know right now?"</span>
+                                <span class="label-subtext">"What do I need to know right now?"</span>
                             </div>
                         </label>
                     </div>
@@ -110,9 +118,9 @@
                             <svg class="selection-icon" width="12" height="12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                             </svg>
-                            <div class="text-left flex-grow"> <!-- V2.1: Text container -->
+                            <div class="label-text-container">
                                 <span class="font-semibold">Problem Solving & Career</span>
-                                <span class="block text-sm text-gray-300">"How can I overcome this challenge?"</span>
+                                <span class="label-subtext">"How can I overcome this challenge?"</span>
                             </div>
                         </label>
                     </div>
@@ -122,9 +130,9 @@
                             <svg class="selection-icon" width="12" height="12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                             </svg>
-                           <div class="text-left flex-grow"> <!-- V2.1: Text container -->
+                           <div class="label-text-container">
                                 <span class="font-semibold">Relationships & Connection</span>
-                                <span class="block text-sm text-gray-300">"What do I need to understand about this relationship?"</span>
+                                <span class="label-subtext">"What do I need to understand about this relationship?"</span>
                             </div>
                         </label>
                     </div>
@@ -134,7 +142,7 @@
                             <svg class="selection-icon" width="12" height="12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                             </svg>
-                           <div class="text-left flex-grow"> <!-- V2.1: Text container -->
+                           <div class="label-text-container">
                                 <span class="font-semibold">Other (Specify)</span>
                             </div>
                         </label>
@@ -143,7 +151,8 @@
 
                 <textarea id="user-intention-other" rows="3" placeholder="Type your specific question here..." class="input-base mt-3 hidden"></textarea>
 
-                <button id="btn-to-spread" class="btn btn-primary mt-4" disabled>Set Intention & Choose Spread</button>
+                <!-- V2.3: Corrected button text -->
+                <button id="btn-to-spread" class="btn btn-primary mt-4" disabled>Set Intention</button>
             </div>
 
             <!-- SCREEN 2: SPREAD CHOICE -->
@@ -244,15 +253,15 @@
         </main>
 
         <footer class="text-center text-xs text-gray-500 mt-4">
-            Version 2.1
+            Version 2.3
         </footer>
     </div>
 
     <script>
         // --- SPREAD LIBRARY ---
         const SPREAD_LIBRARY = {
-            "three-card": { id: "three-card", name: "Three-Card Spread", description: "A quick, versatile spread.", card_count: 3, map: [{ position: 1, name: "Past" }, { position: 2, name: "Present" }, { position: 3, name: "Future" }], visual_guide: `<p class="text-sm text-gray-300 mb-4">Lay 3 cards:</p><div class="flex justify-around text-center"><div class="w-1/3 p-2 border border-gray-600 rounded-lg"><span class="block font-bold">1</span><span class="block text-sm text-indigo-300">Past</span></div><div class="w-1/3 p-2 border border-gray-600 rounded-lg mx-2"><span class="block font-bold">2</span><span class="block text-sm text-indigo-300">Present</span></div><div class="w-1/3 p-2 border border-gray-600 rounded-lg"><span class="block font-bold">3</span><span class="block text-sm text-indigo-300">Future</span></div></div>` },
-            "celtic-cross": { id: "celtic-cross", name: "10-Card Celtic Cross", description: "A deep analysis.", card_count: 10, map: [{ position: 1, name: "Present" }, { position: 2, name: "Challenge" }, { position: 3, name: "Foundation" }, { position: 4, name: "Recent Past" }, { position: 5, name: "Potential" }, { position: 6, name: "Near Future" }, { position: 7, name: "Self" }, { position: 8, name: "External" }, { position: 9, name: "Hopes/Fears" }, { position: 10, name: "Outcome" }], visual_guide: `<p class="text-sm text-gray-300 mb-4">Lay 10 cards:</p><div class="grid grid-cols-4 gap-2 text-center text-xs"><div></div> <div></div><div class="p-2 border border-gray-600 rounded-lg"><span class="block font-bold">10</span><span class="block text-indigo-300">Outcome</span></div><div class="p-2 border border-gray-600 rounded-lg"><span class="block font-bold">7</span><span class="block text-indigo-300">Self</span></div><div class="p-2 border border-gray-600 rounded-lg"><span class="block font-bold">5</span><span class="block text-indigo-300">Potential</span></div><div class="p-2 border border-gray-600 rounded-lg row-span-2 relative"><span class="block font-bold">1</span><span class="block text-indigo-300">Present</span><div class="absolute top-1/2 left-1/4 w-1/2 p-2 border-2 border-dashed border-indigo-400 rounded-lg" style="transform: translateY(-50%) rotate(90deg);"><span class="block font-bold">2</span><span class="block text-indigo-300">Challenge</span></div></div><div class="p-2 border border-gray-600 rounded-lg"><span class="block font-bold">9</span><span class="block text-indigo-300">Hopes/Fears</span></div><div class="p-2 border border-gray-600 rounded-lg"><span class="block font-bold">8</span><span class="block text-indigo-300">External</span></div><div class="p-2 border border-gray-600 rounded-lg"><span class="block font-bold">4</span><span class="block text-indigo-300">Recent Past</span></div><div></div> <div></div><div class="p-2 border border-gray-600 rounded-lg"><span class="block font-bold">6</span><span class="block text-indigo-300">Near Future</span></div><div></div><div class="p-2 border border-gray-600 rounded-lg"><span class="block font-bold">3</span><span class="block text-indigo-300">Foundation</span></div><div></div> <div></div></div>` }
+            "three-card": { id: "three-card", name: "Three-Card Spread", description: "A quick, versatile spread.", card_count: 3, map: [{ position: 1, name: "Past", description: "Past events influencing the situation." }, { position: 2, name: "Present", description: "The current situation and energies." }, { position: 3, name: "Future", description: "The likely outcome or path forward." }], visual_guide: `<p class="text-sm text-gray-300 mb-4">Lay 3 cards:</p><div class="flex justify-around text-center"><div class="w-1/3 p-2 border border-gray-600 rounded-lg"><span class="block font-bold">1</span><span class="block text-sm text-indigo-300">Past</span></div><div class="w-1/3 p-2 border border-gray-600 rounded-lg mx-2"><span class="block font-bold">2</span><span class="block text-sm text-indigo-300">Present</span></div><div class="w-1/3 p-2 border border-gray-600 rounded-lg"><span class="block font-bold">3</span><span class="block text-sm text-indigo-300">Future</span></div></div>` },
+            "celtic-cross": { id: "celtic-cross", name: "10-Card Celtic Cross", description: "A deep analysis.", card_count: 10, map: [{ position: 1, name: "Present", description: "Heart of the matter, current state." }, { position: 2, name: "Challenge", description: "Immediate obstacle or influence." }, { position: 3, name: "Foundation", description: "Root cause, past basis." }, { position: 4, name: "Recent Past", description: "Events just passing." }, { position: 5, name: "Potential", description: "Best outcome, conscious goals." }, { position: 6, name: "Near Future", description: "Immediate future events." }, { position: 7, name: "Self", description: "Your attitude or self-perception." }, { position: 8, name: "External", description: "Environmental or external influences." }, { position: 9, name: "Hopes/Fears", description: "Subconscious desires/anxieties." }, { position: 10, name: "Outcome", description: "Likely resolution." }], visual_guide: `<p class="text-sm text-gray-300 mb-4">Lay 10 cards:</p><div class="grid grid-cols-4 gap-2 text-center text-xs"><div></div> <div></div><div class="p-2 border border-gray-600 rounded-lg"><span class="block font-bold">10</span><span class="block text-indigo-300">Outcome</span></div><div class="p-2 border border-gray-600 rounded-lg"><span class="block font-bold">7</span><span class="block text-indigo-300">Self</span></div><div class="p-2 border border-gray-600 rounded-lg"><span class="block font-bold">5</span><span class="block text-indigo-300">Potential</span></div><div class="p-2 border border-gray-600 rounded-lg row-span-2 relative"><span class="block font-bold">1</span><span class="block text-indigo-300">Present</span><div class="absolute top-1/2 left-1/4 w-1/2 p-2 border-2 border-dashed border-indigo-400 rounded-lg" style="transform: translateY(-50%) rotate(90deg);"><span class="block font-bold">2</span><span class="block text-indigo-300">Challenge</span></div></div><div class="p-2 border border-gray-600 rounded-lg"><span class="block font-bold">9</span><span class="block text-indigo-300">Hopes/Fears</span></div><div class="p-2 border border-gray-600 rounded-lg"><span class="block font-bold">8</span><span class="block text-indigo-300">External</span></div><div class="p-2 border border-gray-600 rounded-lg"><span class="block font-bold">4</span><span class="block text-indigo-300">Recent Past</span></div><div></div> <div></div><div class="p-2 border border-gray-600 rounded-lg"><span class="block font-bold">6</span><span class="block text-indigo-300">Near Future</span></div><div></div><div class="p-2 border border-gray-600 rounded-lg"><span class="block font-bold">3</span><span class="block text-indigo-300">Foundation</span></div><div></div> <div></div></div>` }
         };
 
         // --- STATE MANAGEMENT ---
@@ -305,14 +314,14 @@
 
                 // Hide all intention icons first
                 document.querySelectorAll('#intention-options .selection-icon').forEach(icon => {
-                    icon.style.display = 'none'; // Use inline style
+                    icon.style.display = 'none';
                 });
 
                 // Show the icon within the clicked label
-                const label = radio.nextElementSibling; // Get the label
+                const label = radio.nextElementSibling;
                 const icon = label.querySelector('.selection-icon');
                 if (icon) {
-                     icon.style.display = 'inline-block'; // Use inline style
+                     icon.style.display = 'inline-block';
                 }
 
                 if (radio.value === 'other') {
@@ -334,14 +343,14 @@
 
                  // Hide all spread icons first
                  document.querySelectorAll('#spread-library .selection-icon').forEach(icon => {
-                     icon.style.display = 'none'; // Use inline style
+                     icon.style.display = 'none';
                  });
 
                  // Show the icon within the clicked label
-                const label = radio.nextElementSibling; // Get the label
+                const label = radio.nextElementSibling;
                 const icon = label.querySelector('.selection-icon');
                 if (icon) {
-                    icon.style.display = 'inline-block'; // Use inline style
+                    icon.style.display = 'inline-block';
                 }
 
                  btnToUpload.disabled = false;
@@ -368,7 +377,7 @@
             spreadLibraryContainer.innerHTML = '';
             Object.values(SPREAD_LIBRARY).forEach(spread => {
                 const isChecked = appState.selectedSpread && appState.selectedSpread.id === spread.id;
-                // V2.1: Corrected icon placement and added text container
+                 // V2.3: Added label-text-container and correct subtext class
                 spreadLibraryContainer.innerHTML += `
                     <div class="relative">
                         <input type="radio" id="${spread.id}" name="spread" value="${spread.id}" class="sr-only" ${isChecked ? 'checked' : ''}>
@@ -376,9 +385,9 @@
                             <svg class="selection-icon" width="12" height="12" style="${isChecked ? 'display: inline-block;' : 'display: none;'}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                             </svg>
-                            <div class="text-left flex-grow"> <!-- Text container -->
+                            <div class="label-text-container">
                                 <span class="font-semibold text-lg">${spread.name}</span>
-                                <span class="block text-sm text-gray-300">${spread.description}</span>
+                                <span class="label-subtext">${spread.description}</span>
                             </div>
                         </label>
                     </div>`;
@@ -452,7 +461,7 @@
         async function performReading() {
             showScreen('screen-reading'); loadingSpinner.style.display = 'block'; resultsContent.style.display = 'none'; errorDisplay.style.display = 'none';
             const userIntention = appState.userIntention; const spreadName = appState.selectedSpread ? appState.selectedSpread.name : 'Unknown';
-            const spreadMapString = appState.selectedSpread ? appState.selectedSpread.map.map(p => `Pos ${p.position} (${p.name}): ${SPREAD_LIBRARY[appState.selectedSpread.id]?.map.find(m => m.position === p.position)?.description || ''}`).join('\n') : '';
+            const spreadMapString = appState.selectedSpread ? appState.selectedSpread.map.map(p => `Pos ${p.position} (${p.name}): ${p.description || 'General influence.'}`).join('\n') : '';
             if (!appState.selectedSpread || !appState.selectedSpread.map) { displayError('Invalid spread.'); loadingSpinner.style.display = 'none'; return; }
             const prompt = `You are The Oracle, a wise and insightful Tarot reader. A user has provided an image of a tarot spread, a question, and the spread's structure. USER'S QUESTION/INTENTION: "${userIntention}" SPREAD: "${spreadName}" SPREAD MAP (Position Number, Name, Meaning/Focus):\n${spreadMapString}\nAnalyze the provided image. Identify exactly ${appState.selectedSpread.card_count} cards, their orientations (Upright, Reversed, or Sideways), and match them to their corresponding position in the SPREAD MAP. Synthesize ALL this information (question, spread map, cards) into a cohesive narrative reading. Respond ONLY with a valid JSON object: {"summary": "...", "deep_dive": [{"position_number": N, "position_name": "...", "card_name": "...", "orientation": "...", "meaning": "..."}, ...]}. "summary" is 1 insightful paragraph (3-5 sentences) directly answering "${userIntention}". "deep_dive" is an array, 1 object per position. "meaning" MUST be a detailed interpretation of that card in that specific position, synthesized with "${userIntention}". Interpret "Sideways" as "blocked/delayed energy" related to the card's meaning and "${userIntention}". Example deep_dive: [{"position_number": 1, "position_name": "Present", "card_name": "The Fool", "orientation": "Upright", "meaning": "Regarding your career question, this signifies a leap of faith..."}]`;
             try {
@@ -481,9 +490,26 @@
                 summaryText.textContent = appState.reading.summary;
                 deepDiveSpreadGuide.innerHTML = appState.selectedSpread.visual_guide;
                 deepDiveCards.innerHTML = '';
+                // V2.3: Ensure spread map data is available for lookup
+                const currentSpreadMap = SPREAD_LIBRARY[appState.selectedSpread.id]?.map || [];
                 appState.reading.deep_dive.forEach(card => {
-                    const positionName = appState.selectedSpread.map.find(p => p.position === card.position_number)?.name || card.position_name || 'Unknown Position';
-                    deepDiveCards.innerHTML += `<div class="p-4 bg-gray-700/50 rounded-lg border border-gray-600"><div class="flex items-center mb-2"><span class="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded-full bg-indigo-600 text-white font-bold text-sm mr-3">${card.position_number}</span><div><h4 class="text-lg font-semibold text-white">${card.card_name} (${card.orientation})</h4><p class="text-sm font-medium text-indigo-300">${positionName}</p></div></div><p class="text-gray-300 ml-11">${card.meaning}</p></div>`;
+                    // Use the more detailed description from the library if available
+                    const positionInfo = currentSpreadMap.find(p => p.position === card.position_number);
+                    const positionName = positionInfo?.name || card.position_name || 'Unknown Position';
+                    const positionDescription = positionInfo?.description || ''; // V2.3 Add description
+
+                    deepDiveCards.innerHTML += `
+                    <div class="p-4 bg-gray-700/50 rounded-lg border border-gray-600">
+                        <div class="flex items-start mb-2"> <!-- V2.3 Changed to items-start -->
+                            <span class="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded-full bg-indigo-600 text-white font-bold text-sm mr-3 mt-1">${card.position_number}</span>
+                            <div>
+                                <h4 class="text-lg font-semibold text-white">${card.card_name} (${card.orientation})</h4>
+                                <p class="text-sm font-medium text-indigo-300">${positionName}</p>
+                                ${positionDescription ? `<p class="text-xs text-gray-400 italic mt-0.5">${positionDescription}</p>` : ''} <!-- V2.3 Display position description -->
+                            </div>
+                        </div>
+                        <p class="text-gray-300 ml-11">${card.meaning}</p>
+                    </div>`;
                 });
                 resultsContent.style.display = 'block'; errorDisplay.style.display = 'none';
                 toggleSummary.click(); // Default to summary
@@ -494,20 +520,17 @@
             errorMessage.textContent = message; errorDisplay.style.display = 'block'; resultsContent.style.display = 'none'; loadingSpinner.style.display = 'none';
         }
 
-        // V2.1: Reinstated DOMContentLoaded to hide icons initially
+        // DOMContentLoaded listener for initial icon hide
         document.addEventListener('DOMContentLoaded', () => {
              console.log("DOM Loaded, hiding icons...");
              document.querySelectorAll('.selection-icon').forEach(icon => {
-                 // Check if the parent radio is checked *after* the DOM is loaded
                  const label = icon.closest('label');
                  const inputId = label ? label.getAttribute('for') : null;
                  const input = inputId ? document.getElementById(inputId) : null;
                  if (!input || !input.checked) {
                     icon.style.display = 'none';
                  } else {
-                     // If it's checked on load (e.g., browser back button), ensure it's visible
                      icon.style.display = 'inline-block';
-                     console.log(`Icon for ${inputId} left visible as it is checked on load.`);
                  }
              });
         });
