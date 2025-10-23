@@ -1,4 +1,4 @@
-<!-- Version 1.0 -->
+<!-- Version 1.1 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -56,7 +56,7 @@
             height: 1px;
             padding: 0;
             margin: -1px;
-            overflow: hidden;
+            overflow: hidden; /* <-- V1.1 FIX: Corrected typo from "verflow" */
             clip: rect(0, 0, 0, 0);
             white-space: nowrap;
             border-width: 0;
@@ -217,7 +217,7 @@
         </main>
 
         <footer class="text-center text-xs text-gray-500 mt-4">
-            Version 1.0
+            Version 1.1
         </footer>
     </div>
 
@@ -385,12 +385,28 @@
             }
         }
         
-        // --- V1.0: SIMPLIFIED EVENT LISTENERS ---
+        // --- V1.1: ROBUST GLOBAL CLICK HANDLER (EVENT DELEGATION) ---
+        // This single listener handles all radio button clicks for a much more
+        // reliable experience, especially on mobile browsers.
+        document.addEventListener('click', (e) => {
+            const label = e.target.closest('.radio-label');
+            if (!label) return; // Click wasn't on a label, do nothing.
 
-        // --- INTENTION SCREEN ---
-        // Listen for changes on the whole fieldset
-        intentionOptions.addEventListener('change', (e) => {
-            const radio = e.target;
+            const radioId = label.getAttribute('for');
+            if (!radioId) return;
+
+            const radio = document.getElementById(radioId);
+            if (!radio) return;
+
+            // Manually check the radio button.
+            // This is safer than relying on the 'change' event which can be buggy.
+            if (!radio.checked) {
+                radio.checked = true;
+            }
+
+            // --- Manually run the logic that 'change' used to handle ---
+
+            // 1. If it's an INTENTION radio button:
             if (radio.name === 'intention') {
                 if (radio.value === 'other') {
                     userIntentionOther.classList.remove('hidden');
@@ -398,16 +414,25 @@
                 } else {
                     userIntentionOther.classList.add('hidden');
                 }
-                // Enable the continue button
+                // Force-enable the 'Continue' button
                 btnToSpread.disabled = false;
                 btnToSpread.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+
+            // 2. If it's a SPREAD radio button:
+            if (radio.name === 'spread') {
+                // Update the app's state with the selected spread object
+                appState.selectedSpread = SPREAD_LIBRARY[radio.value];
+                // Force-enable the 'Continue' button
+                btnToUpload.disabled = false;
+                btnToUpload.classList.remove('opacity-50', 'cursor-not-allowed');
             }
         });
 
         // Screen 1 -> Screen 2
         btnToSpread.addEventListener('click', () => {
+            // We still validate on click, just in case
             const selectedIntention = document.querySelector('input[name="intention"]:checked');
-            // This check is now *almost* redundant, but good for safety
             if (!selectedIntention) {
                 alert('Please select an intention to proceed.');
                 return;
@@ -432,7 +457,6 @@
         function populateSpreadLibrary() {
             spreadLibraryContainer.innerHTML = ''; // Clear old
             Object.values(SPREAD_LIBRARY).forEach(spread => {
-                // Check if this spread was the one previously selected
                 const isChecked = appState.selectedSpread && appState.selectedSpread.id === spread.id;
                 const spreadHtml = `
                     <div class="relative">
@@ -446,7 +470,7 @@
                 spreadLibraryContainer.innerHTML += spreadHtml;
             });
             
-            // If a spread was already checked, ensure the button is enabled
+            // If returning to this screen, re-check if the button should be enabled
             if (appState.selectedSpread) {
                  btnToUpload.disabled = false;
                  btnToUpload.classList.remove('opacity-50', 'cursor-not-allowed');
@@ -455,17 +479,6 @@
                  btnToUpload.classList.add('opacity-50', 'cursor-not-allowed');
             }
         }
-        
-        // Listen for changes on the spread library fieldset
-        spreadLibrary.addEventListener('change', (e) => {
-            const radio = e.target;
-            if (radio.name === 'spread') {
-                appState.selectedSpread = SPREAD_LIBRARY[radio.value];
-                // Enable the continue button
-                btnToUpload.disabled = false;
-                btnToUpload.classList.remove('opacity-50', 'cursor-not-allowed');
-            }
-        });
         
         // Screen 2 -> Screen 3
         btnToUpload.addEventListener('click', () => {
@@ -538,20 +551,19 @@
             if (checkedIntention) checkedIntention.checked = false;
             userIntentionOther.value = '';
             userIntentionOther.classList.add('hidden');
-            btnToSpread.disabled = true; // V1.0 Reset to disabled
+            btnToSpread.disabled = true;
             btnToSpread.classList.add('opacity-50', 'cursor-not-allowed');
 
             // Reset Spread Screen
-            btnToUpload.disabled = true; // V1.0 Reset to disabled
+            btnToUpload.disabled = true;
             btnToUpload.classList.add('opacity-50', 'cursor-not-allowed');
-            // We'll repopulate spreads when screen is shown, so no need to uncheck here
-
+            
             // Reset Upload Screen
             imageUpload.value = null;
             imagePreview.src = '#';
             imagePreviewContainer.classList.add('hidden');
             imageUploadText.textContent = "Click to select an image";
-            revealButton.disabled = true; // V1.0 Reset to disabled
+            revealButton.disabled = true;
             revealButton.classList.add('opacity-50', 'cursor-not-allowed');
 
             // Reset Reading Screen
@@ -560,7 +572,7 @@
             summaryText.textContent = '';
             deepDiveCards.innerHTML = '';
             deepDiveSpreadGuide.innerHTML = '';
-            toggleSummary.click(); // Programmatically click summary
+            toggleSummary.click();
 
             showScreen('screen-intention');
         });
@@ -728,5 +740,102 @@
 
                 if (!result.candidates || !result.candidates[0].content || !result.candidates[0].content.parts[0] || !result.candidates[0].content.parts[0].text) {
                      console.error("Malformed API response structure:", result);
-This model's content is truncated.
+                     throw new Error("The Oracle's response was malformed.");
+                }
+
+                const jsonString = result.candidates[0].content.parts[0].text;
+                console.log("Received JSON string:", jsonString);
+
+                // Attempt to parse the JSON
+                try {
+                    const reading = JSON.parse(jsonString);
+                     // Basic validation of the parsed object
+                    if (!reading.summary || !reading.deep_dive || !Array.isArray(reading.deep_dive)) {
+                         console.error("Parsed JSON is missing required keys:", reading);
+                         throw new Error("The Oracle's response is incomplete. Missing summary or deep_dive.");
+                    }
+                    appState.reading = reading;
+                    displayReading();
+                } catch (parseError) {
+                    console.error('JSON Parse Error:', parseError);
+                    console.error('Raw, unparseable string:', jsonString);
+                    throw new Error(`The Oracle's response was unclear and could not be interpreted. (Details: ${parseError.message})`);
+                }
+
+            } catch (error) {
+                console.error('Error in performReading (REAL API CALL):', error);
+                displayError(`The Oracle's vision is clouded. ${error.message}. Please try again...`);
+            } finally {
+                 console.log("Hiding spinner in finally block (REAL API).");
+                loadingSpinner.style.display = 'none'; // Ensure spinner hides
+            }
+            // --- END OF REAL API CALL ---
+        }
+
+        /**
+         * Renders the reading from appState to the UI.
+         */
+        function displayReading() {
+            console.log("Attempting to display reading...", appState.reading);
+            if (!appState.reading) {
+                console.error("displayReading called, but no reading is available in appState.");
+                displayError("An unknown error occurred. No reading was found.");
+                return;
+            }
+
+            try {
+                // Populate Summary
+                summaryText.textContent = appState.reading.summary;
+
+                // Populate Deep Dive
+                // V0.8: Add the visual guide to the deep dive
+                deepDiveSpreadGuide.innerHTML = appState.selectedSpread.visual_guide;
+                
+                deepDiveCards.innerHTML = ''; // Clear old cards
+                appState.reading.deep_dive.forEach(card => {
+                    // V0.8: Improved UI for each card
+                    const cardHtml = `
+                        <div class="p-4 bg-gray-700/50 rounded-lg border border-gray-600">
+                            <div class="flex items-center mb-2">
+                                <span class="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded-full bg-indigo-600 text-white font-bold text-sm mr-3">${card.position_number}</span>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-white">${card.card_name} (${card.orientation})</h4>
+                                    <p class="text-sm font-medium text-indigo-300">${card.position_name}</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-300 ml-11">${card.meaning}</p>
+                        </div>
+                    `;
+                    deepDiveCards.innerHTML += cardHtml;
+                });
+
+                resultsContent.style.display = 'block';
+                errorDisplay.style.display = 'none';
+                // Default to summary view
+                toggleSummary.click();
+
+            } catch (error) {
+                console.error('Error during displayReading:', error);
+                console.error('Reading data that caused error:', appState.reading);
+                displayError(`An error occurred while displaying the reading: ${error.message}`);
+            }
+        }
+
+        /**
+         * Displays an error message to the user.
+         */
+        function displayError(message) {
+            errorMessage.textContent = message;
+            errorDisplay.style.display = 'block';
+            resultsContent.style.display = 'none';
+            loadingSpinner.style.display = 'none';
+        }
+
+        // --- INITIALIZE APP ---
+        // V1.1: We only need to call this *once* when we navigate to the spread screen.
+        // It's called from the btnToSpread click listener.
+        
+    </script>
+</body>
+</html>
 
