@@ -1,4 +1,4 @@
-<!-- Version 2.3 -->
+<!-- Version 2.4 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,7 +11,7 @@
         body {
             font-family: 'Inter', sans-serif;
             background-color: #111827; /* Dark gray-blue */
-            padding-bottom: 4rem;
+            padding-bottom: 4rem; /* Ensure space for footer */
         }
         .screen {
             display: none; /* All screens hidden by default */
@@ -19,20 +19,22 @@
         #screen-intention {
             display: block; /* Show the first screen */
         }
+        /* V2.4: Ensure base button styles apply broadly */
         .btn {
-            @apply inline-block w-full text-center px-6 py-3 rounded-lg font-semibold shadow-md transition-all duration-300;
+            @apply inline-block w-full text-center px-6 py-3 rounded-lg font-semibold shadow-md transition-all duration-300 border; /* Added base border */
             @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800;
         }
         .btn-primary {
-            @apply bg-indigo-600 text-white hover:bg-indigo-500 focus:ring-indigo-500;
+            @apply bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-500 focus:ring-indigo-500;
         }
-        /* V2.3: Reinstated border for secondary button affordance */
+        /* V2.4: Explicit styling for secondary buttons */
         .btn-secondary {
-            @apply bg-transparent text-gray-300 border border-gray-600 hover:bg-gray-700 hover:border-indigo-500 hover:text-white focus:ring-indigo-500 shadow-none;
+            @apply bg-transparent text-gray-300 border-gray-500 hover:bg-gray-700 hover:border-indigo-500 hover:text-white focus:ring-indigo-500 shadow-none;
+             /* Ensure padding and block behavior inherited */
         }
         /* Style for disabled primary button */
         .btn-primary:disabled {
-            @apply bg-indigo-800 opacity-50 cursor-not-allowed;
+            @apply bg-indigo-800 border-indigo-800 text-gray-400 opacity-60 cursor-not-allowed; /* Adjusted opacity/text color */
         }
         .card-bg {
             @apply bg-gray-800 border border-gray-700 rounded-lg p-6 shadow-xl;
@@ -45,8 +47,8 @@
         }
         /* Radio Button Style */
         .radio-label {
-            /* V2.3: Ensure vertical centering */
-            @apply flex flex-row items-center w-full p-4 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer text-center transition-colors duration-200 hover:bg-gray-600 focus-within:ring-2 focus-within:ring-indigo-500;
+            /* V2.4: Use inline-flex for direct alignment */
+            @apply inline-flex items-center w-full p-4 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer text-center transition-colors duration-200 hover:bg-gray-600 focus-within:ring-2 focus-within:ring-indigo-500;
         }
         /* Style for the selection icon */
         .selection-icon {
@@ -59,14 +61,14 @@
         }
          /* JS will handle showing the icon */
          input[type="radio"]:checked + .radio-label span,
-         input[type="radio"]:checked + .radio-label .label-subtext { /* V2.3: Ensure subtext is also white */
+         input[type="radio"]:checked + .radio-label .label-subtext {
              @apply text-white;
          }
          /* Container for text next to icon */
          .label-text-container {
              @apply text-left flex-grow;
          }
-         .label-subtext { /* V2.3: Specific class for subtext styling */
+         .label-subtext {
             @apply block text-sm text-gray-300;
          }
         .sr-only {
@@ -151,7 +153,6 @@
 
                 <textarea id="user-intention-other" rows="3" placeholder="Type your specific question here..." class="input-base mt-3 hidden"></textarea>
 
-                <!-- V2.3: Corrected button text -->
                 <button id="btn-to-spread" class="btn btn-primary mt-4" disabled>Set Intention</button>
             </div>
 
@@ -253,7 +254,7 @@
         </main>
 
         <footer class="text-center text-xs text-gray-500 mt-4">
-            Version 2.3
+            Version 2.4
         </footer>
     </div>
 
@@ -377,7 +378,6 @@
             spreadLibraryContainer.innerHTML = '';
             Object.values(SPREAD_LIBRARY).forEach(spread => {
                 const isChecked = appState.selectedSpread && appState.selectedSpread.id === spread.id;
-                 // V2.3: Added label-text-container and correct subtext class
                 spreadLibraryContainer.innerHTML += `
                     <div class="relative">
                         <input type="radio" id="${spread.id}" name="spread" value="${spread.id}" class="sr-only" ${isChecked ? 'checked' : ''}>
@@ -490,22 +490,20 @@
                 summaryText.textContent = appState.reading.summary;
                 deepDiveSpreadGuide.innerHTML = appState.selectedSpread.visual_guide;
                 deepDiveCards.innerHTML = '';
-                // V2.3: Ensure spread map data is available for lookup
                 const currentSpreadMap = SPREAD_LIBRARY[appState.selectedSpread.id]?.map || [];
                 appState.reading.deep_dive.forEach(card => {
-                    // Use the more detailed description from the library if available
                     const positionInfo = currentSpreadMap.find(p => p.position === card.position_number);
                     const positionName = positionInfo?.name || card.position_name || 'Unknown Position';
-                    const positionDescription = positionInfo?.description || ''; // V2.3 Add description
+                    const positionDescription = positionInfo?.description || '';
 
                     deepDiveCards.innerHTML += `
                     <div class="p-4 bg-gray-700/50 rounded-lg border border-gray-600">
-                        <div class="flex items-start mb-2"> <!-- V2.3 Changed to items-start -->
+                        <div class="flex items-start mb-2">
                             <span class="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded-full bg-indigo-600 text-white font-bold text-sm mr-3 mt-1">${card.position_number}</span>
                             <div>
                                 <h4 class="text-lg font-semibold text-white">${card.card_name} (${card.orientation})</h4>
                                 <p class="text-sm font-medium text-indigo-300">${positionName}</p>
-                                ${positionDescription ? `<p class="text-xs text-gray-400 italic mt-0.5">${positionDescription}</p>` : ''} <!-- V2.3 Display position description -->
+                                ${positionDescription ? `<p class="text-xs text-gray-400 italic mt-0.5">${positionDescription}</p>` : ''}
                             </div>
                         </div>
                         <p class="text-gray-300 ml-11">${card.meaning}</p>
