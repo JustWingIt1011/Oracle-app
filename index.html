@@ -1,4 +1,4 @@
-<!-- Version 2.4 -->
+<!-- Version 2.5 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,22 +19,23 @@
         #screen-intention {
             display: block; /* Show the first screen */
         }
-        /* V2.4: Ensure base button styles apply broadly */
+        /* Base button styles */
         .btn {
-            @apply inline-block w-full text-center px-6 py-3 rounded-lg font-semibold shadow-md transition-all duration-300 border; /* Added base border */
+            @apply inline-block w-full text-center px-6 py-3 rounded-lg font-semibold shadow-md transition-all duration-300 border-2; /* V2.5: Thicker base border */
             @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800;
         }
         .btn-primary {
             @apply bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-500 focus:ring-indigo-500;
         }
-        /* V2.4: Explicit styling for secondary buttons */
+        /* V2.5: More distinct secondary button */
         .btn-secondary {
-            @apply bg-transparent text-gray-300 border-gray-500 hover:bg-gray-700 hover:border-indigo-500 hover:text-white focus:ring-indigo-500 shadow-none;
-             /* Ensure padding and block behavior inherited */
+            @apply bg-transparent text-gray-300 border-gray-400 hover:bg-gray-700 hover:border-indigo-500 hover:text-white focus:ring-indigo-500 shadow-none;
+             /* Explicitly ensure padding/display */
+             @apply px-6 py-3;
         }
         /* Style for disabled primary button */
         .btn-primary:disabled {
-            @apply bg-indigo-800 border-indigo-800 text-gray-400 opacity-60 cursor-not-allowed; /* Adjusted opacity/text color */
+            @apply bg-indigo-800 border-indigo-800 text-gray-400 opacity-60 cursor-not-allowed;
         }
         .card-bg {
             @apply bg-gray-800 border border-gray-700 rounded-lg p-6 shadow-xl;
@@ -47,12 +48,13 @@
         }
         /* Radio Button Style */
         .radio-label {
-            /* V2.4: Use inline-flex for direct alignment */
-            @apply inline-flex items-center w-full p-4 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer text-center transition-colors duration-200 hover:bg-gray-600 focus-within:ring-2 focus-within:ring-indigo-500;
+            /* V2.5: Removed flex */
+            @apply block w-full p-4 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer text-center transition-colors duration-200 hover:bg-gray-600 focus-within:ring-2 focus-within:ring-indigo-500;
         }
         /* Style for the selection icon */
         .selection-icon {
-             @apply hidden mr-3 text-white flex-shrink-0; /* Keep margin */
+             @apply hidden mr-2 text-white; /* V2.5: Adjusted margin slightly */
+             vertical-align: middle; /* V2.5: Force vertical alignment */
              /* Size is set directly on the SVG element */
         }
         /* Apply selected styles when checked */
@@ -66,7 +68,8 @@
          }
          /* Container for text next to icon */
          .label-text-container {
-             @apply text-left flex-grow;
+             @apply text-left inline-block; /* V2.5: Use inline-block for flow */
+             vertical-align: middle; /* V2.5: Align with icon */
          }
          .label-subtext {
             @apply block text-sm text-gray-300;
@@ -254,7 +257,7 @@
         </main>
 
         <footer class="text-center text-xs text-gray-500 mt-4">
-            Version 2.4
+            Version 2.5
         </footer>
     </div>
 
@@ -322,7 +325,7 @@
                 const label = radio.nextElementSibling;
                 const icon = label.querySelector('.selection-icon');
                 if (icon) {
-                     icon.style.display = 'inline-block';
+                     icon.style.display = 'inline-block'; // Use inline-block
                 }
 
                 if (radio.value === 'other') {
@@ -351,7 +354,7 @@
                 const label = radio.nextElementSibling;
                 const icon = label.querySelector('.selection-icon');
                 if (icon) {
-                    icon.style.display = 'inline-block';
+                    icon.style.display = 'inline-block'; // Use inline-block
                 }
 
                  btnToUpload.disabled = false;
@@ -378,11 +381,12 @@
             spreadLibraryContainer.innerHTML = '';
             Object.values(SPREAD_LIBRARY).forEach(spread => {
                 const isChecked = appState.selectedSpread && appState.selectedSpread.id === spread.id;
+                // V2.5: Ensure inline style for icon display is correct based on isChecked
                 spreadLibraryContainer.innerHTML += `
                     <div class="relative">
                         <input type="radio" id="${spread.id}" name="spread" value="${spread.id}" class="sr-only" ${isChecked ? 'checked' : ''}>
                         <label for="${spread.id}" class="radio-label" onclick="handleSpreadSelection('${spread.id}')">
-                            <svg class="selection-icon" width="12" height="12" style="${isChecked ? 'display: inline-block;' : 'display: none;'}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <svg class="selection-icon" width="12" height="12" style="${isChecked ? 'display: inline-block; vertical-align: middle;' : 'display: none; vertical-align: middle;'}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                             </svg>
                             <div class="label-text-container">
@@ -434,7 +438,7 @@
         btnNewReading.addEventListener('click', () => {
             appState.userIntention = ''; appState.selectedSpread = null; appState.uploadedImage = null; appState.reading = null;
             const checkedIntention = document.querySelector('input[name="intention"]:checked'); if (checkedIntention) checkedIntention.checked = false;
-            document.querySelectorAll('#intention-options .selection-icon, #spread-library .selection-icon').forEach(icon => icon.style.display = 'none');
+            document.querySelectorAll('.selection-icon').forEach(icon => icon.style.display = 'none'); // Ensure all icons are hidden on reset
             userIntentionOther.value = ''; userIntentionOther.classList.add('hidden');
             btnToSpread.disabled = true; btnToSpread.classList.add('opacity-50', 'cursor-not-allowed');
             btnToUpload.disabled = true; btnToUpload.classList.add('opacity-50', 'cursor-not-allowed');
@@ -525,10 +529,11 @@
                  const label = icon.closest('label');
                  const inputId = label ? label.getAttribute('for') : null;
                  const input = inputId ? document.getElementById(inputId) : null;
+                 // V2.5 Ensure icon is hidden if corresponding radio is not checked on load
                  if (!input || !input.checked) {
                     icon.style.display = 'none';
                  } else {
-                     icon.style.display = 'inline-block';
+                     icon.style.display = 'inline-block'; // Should already have vertical-align from style
                  }
              });
         });
