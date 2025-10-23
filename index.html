@@ -1,4 +1,4 @@
-<!-- Version 1.5 -->
+<!-- Version 1.6 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,11 +46,11 @@
         .radio-label {
             @apply flex items-center justify-center w-full p-4 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer text-center transition-colors duration-200 hover:bg-gray-600 focus-within:ring-2 focus-within:ring-indigo-500;
         }
-        /* V1.5: Style for the selection icon */
+        /* V1.6: Style for the selection icon (smaller size) */
         .selection-icon {
-             @apply hidden w-5 h-5 mr-2 text-white; /* Hidden by default */
+             @apply hidden w-4 h-4 mr-2 text-white; /* Hidden by default, changed to w-4 h-4 */
         }
-        /* V1.5: Show icon and apply styles when checked */
+        /* Show icon and apply styles when checked */
         input[type="radio"]:checked + .radio-label {
             @apply bg-indigo-600 border-indigo-400 border-2 text-white ring-2 ring-indigo-400;
         }
@@ -94,7 +94,7 @@
                     <div class="relative">
                         <input type="radio" id="intent-general" name="intention" value="General Guidance & Self-Discovery" class="sr-only">
                         <label for="intent-general" class="radio-label" onclick="handleIntentionSelection('intent-general')">
-                             <!-- V1.5: Added Icon Span -->
+                             <!-- V1.6: Icon Span (smaller) -->
                             <svg class="selection-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                             </svg>
@@ -107,7 +107,7 @@
                     <div class="relative">
                         <input type="radio" id="intent-problem" name="intention" value="Problem Solving & Career" class="sr-only">
                         <label for="intent-problem" class="radio-label" onclick="handleIntentionSelection('intent-problem')">
-                             <!-- V1.5: Added Icon Span -->
+                             <!-- V1.6: Icon Span (smaller) -->
                             <svg class="selection-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                             </svg>
@@ -120,7 +120,7 @@
                     <div class="relative">
                         <input type="radio" id="intent-relationships" name="intention" value="Relationships & Connection" class="sr-only">
                         <label for="intent-relationships" class="radio-label" onclick="handleIntentionSelection('intent-relationships')">
-                             <!-- V1.5: Added Icon Span -->
+                             <!-- V1.6: Icon Span (smaller) -->
                             <svg class="selection-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                             </svg>
@@ -133,7 +133,7 @@
                     <div class="relative">
                         <input type="radio" id="intent-other" name="intention" value="other" class="sr-only">
                         <label for="intent-other" class="radio-label" onclick="handleIntentionSelection('intent-other')">
-                             <!-- V1.5: Added Icon Span -->
+                             <!-- V1.6: Icon Span (smaller) -->
                             <svg class="selection-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                             </svg>
@@ -247,7 +247,7 @@
         </main>
 
         <footer class="text-center text-xs text-gray-500 mt-4">
-            Version 1.5
+            Version 1.6
         </footer>
     </div>
 
@@ -345,7 +345,7 @@
             spreadLibraryContainer.innerHTML = '';
             Object.values(SPREAD_LIBRARY).forEach(spread => {
                 const isChecked = appState.selectedSpread && appState.selectedSpread.id === spread.id;
-                // V1.5: Added icon span to dynamic content
+                // V1.6: Added icon span (smaller)
                 spreadLibraryContainer.innerHTML += `
                     <div class="relative">
                         <input type="radio" id="${spread.id}" name="spread" value="${spread.id}" class="sr-only" ${isChecked ? 'checked' : ''}>
