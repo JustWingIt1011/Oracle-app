@@ -1,4 +1,4 @@
-<!-- Version 2.0 -->
+<!-- Version 2.1 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,14 +20,15 @@
             display: block; /* Show the first screen */
         }
         .btn {
-            @apply inline-block w-full text-center px-6 py-3 rounded-lg font-semibold text-white shadow-md transition-all duration-300;
+            @apply inline-block w-full text-center px-6 py-3 rounded-lg font-semibold shadow-md transition-all duration-300;
             @apply focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800;
         }
         .btn-primary {
-            @apply bg-indigo-600 hover:bg-indigo-500;
+            @apply bg-indigo-600 text-white hover:bg-indigo-500;
         }
+        /* V2.1: Updated secondary button style for distinction */
         .btn-secondary {
-            @apply bg-gray-600 hover:bg-gray-500;
+            @apply bg-transparent text-gray-300 border border-gray-500 hover:bg-gray-700 hover:text-white;
         }
         /* Style for disabled primary button */
         .btn-primary:disabled {
@@ -44,11 +45,12 @@
         }
         /* Radio Button Style */
         .radio-label {
-            @apply flex items-center justify-center w-full p-4 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer text-center transition-colors duration-200 hover:bg-gray-600 focus-within:ring-2 focus-within:ring-indigo-500;
+            /* V2.1: Ensure flex row layout, items center vertically */
+            @apply flex flex-row items-center justify-center w-full p-4 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer text-center transition-colors duration-200 hover:bg-gray-600 focus-within:ring-2 focus-within:ring-indigo-500;
         }
-        /* V2.0: Style for the selection icon (size via SVG attrs, display controlled by JS) */
+        /* Style for the selection icon */
         .selection-icon {
-             @apply hidden mr-1.5 text-white; /* Hidden by default, JS controls display */
+             @apply hidden mr-2 text-white flex-shrink-0; /* V2.1: Adjusted margin, added shrink-0 */
              /* Size is now set directly on the SVG element */
         }
         /* Apply selected styles when checked */
@@ -93,11 +95,10 @@
                     <div class="relative">
                         <input type="radio" id="intent-general" name="intention" value="General Guidance & Self-Discovery" class="sr-only">
                         <label for="intent-general" class="radio-label" onclick="handleIntentionSelection('intent-general')">
-                            <!-- V2.0: Icon Span with width/height attributes -->
                             <svg class="selection-icon" width="12" height="12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                             </svg>
-                            <div>
+                            <div class="text-left flex-grow"> <!-- V2.1: Text container -->
                                 <span class="font-semibold">General Guidance</span>
                                 <span class="block text-sm text-gray-300">"What do I need to know right now?"</span>
                             </div>
@@ -106,11 +107,10 @@
                     <div class="relative">
                         <input type="radio" id="intent-problem" name="intention" value="Problem Solving & Career" class="sr-only">
                         <label for="intent-problem" class="radio-label" onclick="handleIntentionSelection('intent-problem')">
-                            <!-- V2.0: Icon Span with width/height attributes -->
                             <svg class="selection-icon" width="12" height="12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                             </svg>
-                            <div>
+                            <div class="text-left flex-grow"> <!-- V2.1: Text container -->
                                 <span class="font-semibold">Problem Solving & Career</span>
                                 <span class="block text-sm text-gray-300">"How can I overcome this challenge?"</span>
                             </div>
@@ -119,11 +119,10 @@
                     <div class="relative">
                         <input type="radio" id="intent-relationships" name="intention" value="Relationships & Connection" class="sr-only">
                         <label for="intent-relationships" class="radio-label" onclick="handleIntentionSelection('intent-relationships')">
-                            <!-- V2.0: Icon Span with width/height attributes -->
                             <svg class="selection-icon" width="12" height="12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                             </svg>
-                           <div>
+                           <div class="text-left flex-grow"> <!-- V2.1: Text container -->
                                 <span class="font-semibold">Relationships & Connection</span>
                                 <span class="block text-sm text-gray-300">"What do I need to understand about this relationship?"</span>
                             </div>
@@ -132,11 +131,10 @@
                     <div class="relative">
                         <input type="radio" id="intent-other" name="intention" value="other" class="sr-only">
                         <label for="intent-other" class="radio-label" onclick="handleIntentionSelection('intent-other')">
-                            <!-- V2.0: Icon Span with width/height attributes -->
                             <svg class="selection-icon" width="12" height="12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                             </svg>
-                           <div>
+                           <div class="text-left flex-grow"> <!-- V2.1: Text container -->
                                 <span class="font-semibold">Other (Specify)</span>
                             </div>
                         </label>
@@ -246,7 +244,7 @@
         </main>
 
         <footer class="text-center text-xs text-gray-500 mt-4">
-            Version 2.0
+            Version 2.1
         </footer>
     </div>
 
@@ -370,7 +368,7 @@
             spreadLibraryContainer.innerHTML = '';
             Object.values(SPREAD_LIBRARY).forEach(spread => {
                 const isChecked = appState.selectedSpread && appState.selectedSpread.id === spread.id;
-                // V2.0: Icon with width/height, check visibility logic
+                // V2.1: Corrected icon placement and added text container
                 spreadLibraryContainer.innerHTML += `
                     <div class="relative">
                         <input type="radio" id="${spread.id}" name="spread" value="${spread.id}" class="sr-only" ${isChecked ? 'checked' : ''}>
@@ -378,7 +376,7 @@
                             <svg class="selection-icon" width="12" height="12" style="${isChecked ? 'display: inline-block;' : 'display: none;'}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                             </svg>
-                            <div>
+                            <div class="text-left flex-grow"> <!-- Text container -->
                                 <span class="font-semibold text-lg">${spread.name}</span>
                                 <span class="block text-sm text-gray-300">${spread.description}</span>
                             </div>
@@ -427,7 +425,6 @@
         btnNewReading.addEventListener('click', () => {
             appState.userIntention = ''; appState.selectedSpread = null; appState.uploadedImage = null; appState.reading = null;
             const checkedIntention = document.querySelector('input[name="intention"]:checked'); if (checkedIntention) checkedIntention.checked = false;
-             // V2.0: Use JS to hide icons on reset
             document.querySelectorAll('#intention-options .selection-icon, #spread-library .selection-icon').forEach(icon => icon.style.display = 'none');
             userIntentionOther.value = ''; userIntentionOther.classList.add('hidden');
             btnToSpread.disabled = true; btnToSpread.classList.add('opacity-50', 'cursor-not-allowed');
@@ -497,18 +494,20 @@
             errorMessage.textContent = message; errorDisplay.style.display = 'block'; resultsContent.style.display = 'none'; loadingSpinner.style.display = 'none';
         }
 
-        // V2.0: Use DOMContentLoaded to hide icons initially
+        // V2.1: Reinstated DOMContentLoaded to hide icons initially
         document.addEventListener('DOMContentLoaded', () => {
              console.log("DOM Loaded, hiding icons...");
              document.querySelectorAll('.selection-icon').forEach(icon => {
-                 // Double-check the parent radio isn't checked before hiding
+                 // Check if the parent radio is checked *after* the DOM is loaded
                  const label = icon.closest('label');
                  const inputId = label ? label.getAttribute('for') : null;
                  const input = inputId ? document.getElementById(inputId) : null;
                  if (!input || !input.checked) {
                     icon.style.display = 'none';
                  } else {
-                     console.log(`Icon for ${inputId} left visible as it is checked.`);
+                     // If it's checked on load (e.g., browser back button), ensure it's visible
+                     icon.style.display = 'inline-block';
+                     console.log(`Icon for ${inputId} left visible as it is checked on load.`);
                  }
              });
         });
